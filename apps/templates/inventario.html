@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Inventario{% endblock %}
+
+{% block content %}
+    <!-- Aquí va el contenido específico de esta página -->
+    <h5 class="titulopags">Inventario</h5>
+    <div class="lineapag"></div>
+    <form id="formInventario" action="." method="post">
+        {% csrf_token %}  
+        <div class="card">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="codigo_producto">Codigo Producto</label>
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <input id="codigo_producto" type="number" name="codigo_producto" placeholder="Código Producto" class="form-control"  required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="nombre_articulo">Nombre Producto</label>
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <input id="nombre_articulo" type="text" name="nombre_articulo" placeholder="Nombre Producto" class="form-control" maxlength="50" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="unidades">Stock de Unidades</label>
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <input id="unidades" type="number" name="unidades" placeholder="Unidades" class="form-control" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary"  title="agregar" name="agregar">+ Agregar</button>
+            </div>
+        </div>                       
+    </form>
+
+    <hr>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-12 col-xl-12 ">
+            <div class="table-responsive py-2">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Cod Producto</th>
+                            <th>Nombre Articulo</th>
+                            <th>Unidades</th>
+                            <th>Editar Unidades</th>
+                            <th colspan="2">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for x in inv %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{x.codigo_producto}}</td>
+                            <td>{{x.nombre_articulo}}</td>
+                            <td>{{x.unidades}}</td>
+                            <td>
+                                <form id="editarForm_{{ forloop.counter }}" action="{% url 'editarInventario' x.codigo_producto %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="number" id="unidades_{{ forloop.counter }}" name="unidades" value="{{x.unidades}}" class="form-control" required>
+                            </td>
+                            <td> <!-- Aquí comienza la nueva celda para los botones -->
+                                <input type="submit" value="Guardar" class="btn btn-info btnGuardar">
+                                </form>
+                            
+                            <td>
+                                <form id="eliminarForm_{{ forloop.counter }}" action="{% url 'eliminarProducto' x.codigo_producto %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="submit" value="Eliminar" class="btn btn-danger btnEliminar">
+                                    
+                                </form>
+                            </td>
+                        
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

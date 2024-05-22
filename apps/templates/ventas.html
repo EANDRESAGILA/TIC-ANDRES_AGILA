@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Ventas{% endblock %}
+
+{% block content %}
+    <!-- Aquí va el contenido específico de esta página -->
+    <h5 class="titulopags">Listado de Clientes</h5>
+    <div class="lineapag"></div>
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-12 col-xl-12 ">
+            <div class="table-responsive py-2">
+                <table class="table table-striped">
+                    <thead >
+                        <tr>
+                            <th>#</th>
+                            <th>Cedula</th>
+                            <th>Nombres</th>
+                            <th>Apellidos</th>
+                            <th>Dirección</th>
+                            <th>Correo</th>
+                            <th>Contacto</th>
+                            <th colspan="2">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for x in venta %}
+                        <tr>
+                            <td>{{x.cedula}}</td>
+                            <td>{{x.cedula}}</td>
+                            <td>{{x.nombres}}</td>
+                            <td>{{x.apellidos}}</td>
+                            <td>{{x.direccion}}</td>
+                            <td>{{x.email}}</td>
+                            <td>{{x.celular}}</td>
+                            <td><a href="edicionCurso/{{c.codigo}}" class="btn btn-info">Editar</a></td>
+                            <td><a href="eliminarCurso/{{c.codigo}}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

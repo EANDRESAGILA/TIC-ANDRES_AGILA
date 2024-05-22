@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block title %}Nuevo Cliente{% endblock %}
+
+{% block content %}
+
+    <h5 class="titulopags">Nueva Venta</h5>
+    <div class="lineapag"></div>
+
+    <form id="formVentas" action="" method="post">
+        {% csrf_token %}
+        
+        <!-- Información del cliente -->
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="cliente">Cedula o Ruc</label>
+                <input type="text" id="cliente" name="cliente" placeholder="Cédula" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="nombres">Nombres</label>
+                <input type="text" id="nombres" name="nombres" placeholder="Nombres" class="form-control" readonly>
+            </div>
+            <div class="col-md-4">
+                <label for="apellidos">Apellidos</label>
+                <input type="text" id="apellidos" name="apellidos" placeholder="Apellidos" class="form-control" readonly>
+            </div>
+        </div>
+    
+        <hr>
+        
+        <!-- Contenedor de detalles de productos -->
+        <div id="productos-container">
+            <!-- Fila de detalles del primer producto -->
+            <div class="row mb-3 producto-item">
+                <div class="col-md-2 text-center">
+                    <label for="articulo">Codigo Producto</label>
+                    <input type="text" class="form-control codigo-producto" name="articulo[]" placeholder="Código Producto">
+                </div>
+                <div class="col-md-3 text-center">
+                    <label for="detalle_producto">Detalle Producto</label>
+                    <input type="text" class="form-control detalle-producto" name="detalle_producto[]" placeholder="Detalle Producto" readonly>
+                </div>
+                <div class="col-md-2 text-center">
+                    <label for="unidades">Unidades</label>
+                    <input type="number" class="form-control unidades" name="unidades[]" placeholder="Unidades">
+                </div>
+                <div class="col-md-2 text-center">
+                    <label for="precio_unitario">Precio U</label>
+                    <input type="number" class="form-control precio-unitario" name="precio_unitario[]" placeholder="Costo" readonly> 
+                </div>
+                <div class="col-md-3 text-center">
+                    <label for="valor_total">Total</label>
+                    <input type="number" class="form-control valor-total" name="valor_total[]" placeholder="Costo Total" readonly>
+                </div>
+            </div>
+            
+            
+        </div>
+        <hr>  
+        <div class="row mb-3">
+            <div class="col-md-2 text-center">
+                <label for="subtotal">Subtotal</label>
+                <input type="number" id="subtotal" name="subtotal" placeholder="Subtotal" class="form-control" readonly>
+            </div>
+            <div class="col-md-2 text-center">
+                <label for="iva">IVA</label>
+                <input type="number" id="iva" name="iva" placeholder="IVA" class="form-control" readonly>
+            </div>
+            <div class="col-md-2 text-center">
+                <label for="total">Total</label>
+                <input type="number" id="total" name="total" placeholder="Total" class="form-control" readonly>
+            </div>
+        </div>
+             
+     
+        <hr>
+        <!-- Botón para enviar el formulario -->
+        <div class="row">
+            <div class="col-md-6">
+                <button type="button" id="agregarFila" class="btn btn-secondary">Agregar Fila de Venta</button>
+            </div>
+            <div class="col-md-6">
+                <button type="submit" class="btn btn-primary">Registrar Venta</button>
+            </div>
+        </div>
+    </form>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Autocompletar cliente
+            $('#cliente').on('blur', function() {
+                var cedula = $(this).val();
+                $.ajax({
+                    url: '{% url "obtener_cliente" %}',
+                    data: {'cedula': cedula},
+                    success: function(data) {
+                        $('#nombres').val(data.nombres);
+                        $('#apellidos').val(data.apellidos);
+                    },
+                    error: function() {
+                        $('#nombres').val('');
+                        $('#apellidos').val('');
+                    }
+                });
+            });
+    
+            // Autocompletar producto
+            $(document).on('blur', '.codigo-producto', function() {
+                var codigoProducto = $(this).val();
+                var $fila = $(this).closest('.producto-item');
+                $.ajax({
+                    url: '{% url "obtener_producto" %}',
+                    data: {'codigo_producto': codigoProducto},
+                    success: function(data) {
+                        $fila.find('.detalle-producto').val(data.nombre_articulo);
+                        $fila.find('.precio-unitario').val(data.precio);
+                    },
+                    error: function() {
+                        $fila.find('.detalle-producto').val('');
+                        $fila.find('.precio-unitario').val('');
+                    }
+                });
+            });
+
+            // calculos
+            function calcularTotal($fila) {
+            var unidades = parseFloat($fila.find('.unidades').val());
+            var precioUnitario = parseFloat($fila.find('.precio-unitario').val());
+            var total = unidades * precioUnitario;
+            if (!isNaN(total)) {
+                $fila.find('.valor-total').val(total.toFixed(2));
+            }
+        }
+
+        // Calcular total cuando cambian las unidades o el precio
+        $(document).on('input', '.unidades, .precio-unitario', function() {
+            var $fila = $(this).closest('.producto-item');
+            calcularTotal($fila);
+        });
+
+            // Función para agregar una nueva fila de venta
+            function agregarFilaVenta() {
+                var nuevaFila = `
+
+                <div class="row mb-3 producto-item">
+    <div class="col-md-2 text-center">
+        <input type="text" class="form-control codigo-producto" name="articulo[]" placeholder="Código Producto">
+    </div>
+    <div class="col-md-3 text-center">
+        <input type="text" class="form-control detalle-producto" name="detalle_producto[]" placeholder="Detalle Producto" readonly>
+    </div>
+    <div class="col-md-2 text-center">
+        <input type="number" class="form-control unidades" name="unidades[]" placeholder="Unidades">
+    </div>
+    <div class="col-md-2 text-center">
+        <input type="number" class="form-control precio-unitario" name="precio_unitario[]" placeholder="Costo" readonly>
+    </div>
+    <div class="col-md-3 text-center">
+        <input type="number" class="form-control valor-total" name="valor_total[]" placeholder="Costo Total" readonly>
+    </div>
+</div>
+
+                
+
+                `;
+                $('#productos-container').append(nuevaFila);
+            }
+    
+            // Escuchar clic en el botón para agregar una nueva fila
+            $('#agregarFila').on('click', function() {
+                agregarFilaVenta();
+            });
+        });
+
+
+        // Función para calcular el subtotal, el IVA y el total
+function calcularTotales() {
+    var subtotal = 0;
+    $('.producto-item').each(function() {
+        var unidades = parseFloat($(this).find('.unidades').val());
+        var precioUnitario = parseFloat($(this).find('.precio-unitario').val());
+        var total = unidades * precioUnitario;
+        if (!isNaN(total)) {
+            subtotal += total;
+        }
+    });
+    var iva = subtotal * 0.15; // Suponiendo un IVA del 12%
+    var total = subtotal + iva;
+    
+    $('#subtotal').val(subtotal.toFixed(2));
+    $('#iva').val(iva.toFixed(2));
+    $('#total').val(total.toFixed(2));
+}
+
+// Calcular totales al cargar la página
+$(document).ready(function() {
+    calcularTotales();
+});
+
+// Calcular totales al cambiar las unidades o el precio de los productos
+$(document).on('input', '.unidades, .precio-unitario', function() {
+    calcularTotales();
+});
+
+    </script>
+    
+
+   
+    
+
+
+
+{% endblock %}

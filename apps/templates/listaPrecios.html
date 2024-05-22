@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Nuevo Cliente{% endblock %}
+
+{% block content %}
+
+    <h5 class="titulopags">Lista de Precios</h5>
+    <div class="lineapag"></div>
+    <!-- Aquí va el contenido específico de esta página -->
+    <form id="formInventario" action="." method="post">
+        {% csrf_token %}  
+        <div class="card">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="producto">Codigo Producto</label>
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <input id="producto" type="number" name="producto" placeholder="Código Producto" class="form-control"  required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="precio">Precio</label>
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <input id="precio" type="text" name="precio" placeholder="Precio" class="form-control" maxlength="50" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary"  title="agregar" name="agregar">+ Agregar</button>
+            </div>
+        </div>                       
+    </form>
+
+    <hr>
+    
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-12 col-xl-12 ">
+            <div class="table-responsive py-2">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Cod Producto</th>
+                            <th>Nombre Articulo</th>
+                            <th>Precio</th>
+                            <th>Editar Precio</th>
+                            <th colspan="2">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for x in preci %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{x.producto.codigo_producto}}</td>
+                            <td>{{x.producto.nombre_articulo}}</td>
+                            <td>{{x.precio}}</td>
+                            <td>
+                                <form id="editarForm_{{ forloop.counter }}" action="{% url 'editarPrecio' x.producto.codigo_producto %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="decimal" id="precio_{{ forloop.counter }}" name="precio" value="Nuevo Precio" class="form-control" required>
+                            </td>
+                            <td> <!-- Aquí comienza la nueva celda para los botones -->
+                                <input type="submit" value="Guardar" class="btn btn-info btnGuardar">
+                                </form>
+                            
+                            <td>
+                                <form id="eliminarForm_{{ forloop.counter }}" action="" method="post">
+                                    {% csrf_token %}
+                                    <input type="submit" value="Eliminar" class="btn btn-danger btnEliminar">
+                                    
+                                </form>
+                            </td>
+                        
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+   
+
+{% endblock %}

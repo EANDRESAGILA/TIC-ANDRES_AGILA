@@ -1,0 +1,49 @@
+{% load static %}
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href= "{% static 'css/style.css' %}">
+  <title>Login System</title>
+</head>
+<body>
+    <ul class="messages">
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}    
+    </ul>
+
+  <div id="contenedor">
+            
+    <div id="contenedorcentrado">
+        <div id="login">
+            <form id="loginform" method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <label for="usuario">Usuario</label>
+                <input id="usuario" type="text" name="usuario" placeholder="Usuario" required>
+                
+                <label for="password">Contraseña</label>
+                <input id="password" type="password" placeholder="Contraseña" name="password" required>
+                
+                <button type="submit" title="Ingresar" name="Ingresar">Login</button>
+            </form>            
+            
+        </div>
+        <div id="derecho">
+            <div class="titulo">
+                Sistema de Administración Comercial 
+            </div>
+            <hr>
+            <div class="pie-form">
+                <a href="#">Recuperar Contraseña</a>
+                <a href="#">¿No tienes Cuenta? Registrate</a>
+
+            </div>
+        </div>
+    </div>
+</div>
+  
+
+</body>
+</html>
