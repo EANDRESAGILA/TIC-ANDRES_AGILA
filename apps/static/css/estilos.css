@@ -238,7 +238,7 @@ main.min-main{
 .lineapag {
     width: 100%; /* Ancho completo */
     height: 2px; /* Grosor de la línea */
-    background-color:var(--color-barra-lateral); /* Color celeste (puedes ajustar el color si lo deseas) */
+    background-color:gray;
     margin: 20px 0; /* Espaciado alrededor de la línea */
 }
 

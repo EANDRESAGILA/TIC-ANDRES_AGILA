@@ -31,28 +31,4 @@ grid.addEventListener("click",()=>{
     });
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const eliminarForm = document.getElementById('eliminarForm');
-    const btnEliminar = document.querySelector('.btnEliminar');
 
-    eliminarForm.addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevenimos el envío del formulario por defecto
-
-        swal({
-            title: "¿Estás seguro?",
-            text: "Una vez eliminado, no podrás recuperar este elemento.",
-            icon: "warning",
-            buttons: ["Cancelar", "Eliminar"],
-            dangerMode: true,
-        })
-        .then((willDelete) => {
-            if (willDelete) {
-                // Si el usuario confirma la eliminación, enviamos el formulario
-                eliminarForm.submit();
-            } else {
-                // Si el usuario cancela la eliminación, no hacemos nada
-                return false;
-            }
-        });
-    });
-});

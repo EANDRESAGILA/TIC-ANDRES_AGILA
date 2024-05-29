@@ -2,93 +2,101 @@
 
 {% block title %}Nuevo Cliente{% endblock %}
 
-{% block content %}
+{% block pageTitle %}
+NUEVA VENTA
+{% endblock %}
+{% block cenTitle %} REGISTRAR VENTA {% endblock %}
 
-    <h5 class="titulopags">Nueva Venta</h5>
-    <div class="lineapag"></div>
+
+{% block content %}
 
     <form id="formVentas" action="" method="post">
         {% csrf_token %}
         
-        <!-- Información del cliente -->
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label for="cliente">Cedula o Ruc</label>
-                <input type="text" id="cliente" name="cliente" placeholder="Cédula" class="form-control">
-            </div>
-            <div class="col-md-4">
-                <label for="nombres">Nombres</label>
-                <input type="text" id="nombres" name="nombres" placeholder="Nombres" class="form-control" readonly>
-            </div>
-            <div class="col-md-4">
-                <label for="apellidos">Apellidos</label>
-                <input type="text" id="apellidos" name="apellidos" placeholder="Apellidos" class="form-control" readonly>
-            </div>
-        </div>
-    
-        <hr>
-        
-        <!-- Contenedor de detalles de productos -->
-        <div id="productos-container">
-            <!-- Fila de detalles del primer producto -->
-            <div class="row mb-3 producto-item">
-                <div class="col-md-2 text-center">
-                    <label for="articulo">Codigo Producto</label>
-                    <input type="text" class="form-control codigo-producto" name="articulo[]" placeholder="Código Producto">
+        <div class="card align-items-center">
+            <div class="row justify-content-center mt-2 mb-3">
+                <div class="col-md-4 text-center">
+                    <label for="cliente">Cedula o Ruc</label>
+                    <input type="text" id="cliente" name="cliente" placeholder="Cédula" class="form-control">
                 </div>
-                <div class="col-md-3 text-center">
-                    <label for="detalle_producto">Detalle Producto</label>
-                    <input type="text" class="form-control detalle-producto" name="detalle_producto[]" placeholder="Detalle Producto" readonly>
+                <div class="col-md-4 text-center">
+                    <label for="nombres">Nombres</label>
+                    <input type="text" id="nombres" name="nombres" placeholder="Nombres" class="form-control" readonly>
                 </div>
-                <div class="col-md-2 text-center">
-                    <label for="unidades">Unidades</label>
-                    <input type="number" class="form-control unidades" name="unidades[]" placeholder="Unidades">
-                </div>
-                <div class="col-md-2 text-center">
-                    <label for="precio_unitario">Precio U</label>
-                    <input type="number" class="form-control precio-unitario" name="precio_unitario[]" placeholder="Costo" readonly> 
-                </div>
-                <div class="col-md-3 text-center">
-                    <label for="valor_total">Total</label>
-                    <input type="number" class="form-control valor-total" name="valor_total[]" placeholder="Costo Total" readonly>
+                <div class="col-md-4 text-center">
+                    <label for="apellidos">Apellidos</label>
+                    <input type="text" id="apellidos" name="apellidos" placeholder="Apellidos" class="form-control" readonly>
                 </div>
             </div>
             
-            
         </div>
-        <hr>  
-        <div class="row mb-3">
-            <div class="col-md-2 text-center">
-                <label for="subtotal">Subtotal</label>
-                <input type="number" id="subtotal" name="subtotal" placeholder="Subtotal" class="form-control" readonly>
-            </div>
-            <div class="col-md-2 text-center">
-                <label for="iva">IVA</label>
-                <input type="number" id="iva" name="iva" placeholder="IVA" class="form-control" readonly>
-            </div>
-            <div class="col-md-2 text-center">
-                <label for="total">Total</label>
-                <input type="number" id="total" name="total" placeholder="Total" class="form-control" readonly>
-            </div>
-        </div>
-             
-     
         <hr>
-        <!-- Botón para enviar el formulario -->
-        <div class="row">
-            <div class="col-md-6">
-                <button type="button" id="agregarFila" class="btn btn-secondary">Agregar Fila de Venta</button>
+            <!-- Contenedor de detalles de productos -->
+            <div id="productos-container">
+                <!-- Fila de detalles del primer producto -->
+                <div class="row mb-3 producto-item">
+                    <div class="col-md-2 text-center">
+                        <label for="articulo">Codigo Producto</label>
+                        <input type="text" class="form-control codigo-producto" name="articulo[]" placeholder="Código Producto">
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <label for="detalle_producto">Detalle Producto</label>
+                        <input type="text" class="form-control detalle-producto" name="detalle_producto[]" placeholder="Detalle Producto" readonly>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <label for="unidades">Unidades</label>
+                        <input type="number" class="form-control unidades" name="unidades[]" placeholder="Unidades">
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <label for="precio_unitario">Precio U</label>
+                        <input type="decimal" class="form-control precio-unitario" name="precio_unitario[]" placeholder="Costo" readonly> 
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <label for="valor_total">Total</label>
+                        <input type="decimal" class="form-control valor-total" name="valor_total[]" placeholder="Costo Total" readonly>
+                    </div>
+                </div>
+                
+                
             </div>
-            <div class="col-md-6">
-                <button type="submit" class="btn btn-primary">Registrar Venta</button>
+            <hr>           
+                     
+            <!-- Botón para enviar el formulario -->
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="button" id="agregarFila" class="btn btn-secondary"> + Agregar Producto</button>
+                </div>
+                
             </div>
+
+            <hr> 
+        <div class="card align-items-center">
+            <div class="row justify-content-center mt-2 mb-3">
+                <div class="col-md-2 text-center">
+                    <label for="subtotal">Subtotal</label>
+                    <input type="decimal" id="subtotal" name="subtotal" placeholder="Subtotal" class="form-control" readonly>
+                </div>
+                <div class="col-md-2 text-center">
+                    <label for="iva">IVA</label>
+                    <input type="number" id="iva" name="iva" placeholder="IVA" class="form-control" readonly>
+                </div>
+                <div class="col-md-2 text-center">
+                    <label for="total">Total</label>
+                    <input type="decimal" id="total" name="total" placeholder="Total" class="form-control" readonly>
+                </div>
+                <div class="col-md-4 mt-3 text-center"> 
+                    <button type="submit" class="btn btn-primary">Registrar Venta</button>
+                </div>
+            </div>  
         </div>
     </form>
+
+
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Autocompletar cliente
+            // autocompletar cliente
             $('#cliente').on('blur', function() {
                 var cedula = $(this).val();
                 $.ajax({
@@ -105,7 +113,7 @@
                 });
             });
     
-            // Autocompletar producto
+            // autocompletar producto
             $(document).on('blur', '.codigo-producto', function() {
                 var codigoProducto = $(this).val();
                 var $fila = $(this).closest('.producto-item');
@@ -133,48 +141,45 @@
             }
         }
 
-        // Calcular total cuando cambian las unidades o el precio
+        // calculo total cuando cambian las unidades o el precio
         $(document).on('input', '.unidades, .precio-unitario', function() {
             var $fila = $(this).closest('.producto-item');
             calcularTotal($fila);
         });
 
-            // Función para agregar una nueva fila de venta
+            // agregar una nueva fila 
             function agregarFilaVenta() {
                 var nuevaFila = `
-
-                <div class="row mb-3 producto-item">
-    <div class="col-md-2 text-center">
-        <input type="text" class="form-control codigo-producto" name="articulo[]" placeholder="Código Producto">
-    </div>
-    <div class="col-md-3 text-center">
-        <input type="text" class="form-control detalle-producto" name="detalle_producto[]" placeholder="Detalle Producto" readonly>
-    </div>
-    <div class="col-md-2 text-center">
-        <input type="number" class="form-control unidades" name="unidades[]" placeholder="Unidades">
-    </div>
-    <div class="col-md-2 text-center">
-        <input type="number" class="form-control precio-unitario" name="precio_unitario[]" placeholder="Costo" readonly>
-    </div>
-    <div class="col-md-3 text-center">
-        <input type="number" class="form-control valor-total" name="valor_total[]" placeholder="Costo Total" readonly>
-    </div>
-</div>
-
                 
-
-                `;
+                <div class="row mb-3 producto-item">
+                    <div class="col-md-2 text-center">
+                        <input type="text" class="form-control codigo-producto" name="articulo[]" placeholder="Código Producto">
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <input type="text" class="form-control detalle-producto" name="detalle_producto[]" placeholder="Detalle Producto" readonly>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <input type="number" class="form-control unidades" name="unidades[]" placeholder="Unidades">
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <input type="number" class="form-control precio-unitario" name="precio_unitario[]" placeholder="Costo" readonly>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <input type="number" class="form-control valor-total" name="valor_total[]" placeholder="Costo Total" readonly>
+                    </div>
+                </div>
+            `;
                 $('#productos-container').append(nuevaFila);
             }
     
-            // Escuchar clic en el botón para agregar una nueva fila
+            // escuchar clic en el botón para agregar una nueva fila
             $('#agregarFila').on('click', function() {
                 agregarFilaVenta();
             });
         });
 
 
-        // Función para calcular el subtotal, el IVA y el total
+        // calcular el subtotal iva y totl
 function calcularTotales() {
     var subtotal = 0;
     $('.producto-item').each(function() {
@@ -185,7 +190,7 @@ function calcularTotales() {
             subtotal += total;
         }
     });
-    var iva = subtotal * 0.15; // Suponiendo un IVA del 12%
+    var iva = subtotal * 0.15; 
     var total = subtotal + iva;
     
     $('#subtotal').val(subtotal.toFixed(2));
@@ -193,12 +198,12 @@ function calcularTotales() {
     $('#total').val(total.toFixed(2));
 }
 
-// Calcular totales al cargar la página
+// calcular totales
 $(document).ready(function() {
     calcularTotales();
 });
 
-// Calcular totales al cambiar las unidades o el precio de los productos
+// calcular totales al cambiar las unidades o el precio de los productos
 $(document).on('input', '.unidades, .precio-unitario', function() {
     calcularTotales();
 });

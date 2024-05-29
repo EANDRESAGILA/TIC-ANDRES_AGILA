@@ -1,39 +1,49 @@
 {% extends 'base.html' %}
 
 {% block title %}Ventas{% endblock %}
+{% block pageTitle %}
+GESTIÓN VENTAS
+{% endblock %}
+{% block cenTitle %} REGISTRO DE VENTAS {% endblock %}
+
 
 {% block content %}
-    <!-- Aquí va el contenido específico de esta página -->
-    <h5 class="titulopags">Listado de Clientes</h5>
-    <div class="lineapag"></div>
     <div class="row">
         <div class="col-sm-12 col-md-6 col-lg-12 col-xl-12 ">
             <div class="table-responsive py-2">
-                <table class="table table-striped">
-                    <thead >
+                <table class="table table-striped table-bordered table-hover table table-bordered border border-gray">
+                    <thead class="text-center">
                         <tr>
-                            <th>#</th>
+            
+                            <th>Fecha</th>
                             <th>Cedula</th>
                             <th>Nombres</th>
                             <th>Apellidos</th>
-                            <th>Dirección</th>
-                            <th>Correo</th>
-                            <th>Contacto</th>
+                            <th>Codigo Producto</th>
+                            <th>Detalle Producto</th>
+                            <th>Unidades</th>
+                            <th>Total</th>
                             <th colspan="2">Opciones</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="text-center">
                         {% for x in venta %}
                         <tr>
-                            <td>{{x.cedula}}</td>
-                            <td>{{x.cedula}}</td>
-                            <td>{{x.nombres}}</td>
-                            <td>{{x.apellidos}}</td>
-                            <td>{{x.direccion}}</td>
-                            <td>{{x.email}}</td>
-                            <td>{{x.celular}}</td>
-                            <td><a href="edicionCurso/{{c.codigo}}" class="btn btn-info">Editar</a></td>
-                            <td><a href="eliminarCurso/{{c.codigo}}" class="btn btn-danger btnEliminacion">Eliminar</a></td>
+                            <td>{{x.fecha}}</td>
+                            <td>{{x.cliente.cedula}}</td>
+                            <td>{{x.cliente.nombres}}</td>
+                            <td>{{x.cliente.apellidos}}</td>
+                            <td>{{x.articulo.codigo_producto}}</td>
+                            <td>{{x.articulo.nombre_articulo}}</td>
+                            <td>{{x.unidades}}</td>
+                            <td>{{x.valor_total}}</td>
+                            <td><a href="{% url 'editarVenta' x.id %}"" class="btn btn-info">Editar</a></td>
+                            <td>
+                                <form id="eliminarForm"  action="{% url 'eliminarVenta' x.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="submit" value="Eliminar" class="btn btn-danger btnEliminacion">
+                                </form>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -1,47 +1,67 @@
 
 {% extends 'base.html' %}
-
-{% block title %}Nuevo Cliente{% endblock %}
+{% block pageTitle %}
+NUEVO CLIENTE
+{% endblock %}
+{% block cenTitle %} AGREGAR NUEVO CLIENTE {% endblock %}
 
 {% block content %}
 
-    <h5 class="titulopags">Cliente Nuevo</h5>
-    <div class="lineapag"></div>
     
     <form id="formCliente" action="." method="post">
         {% csrf_token %}  
-        <div class="card">
-            <div class="form-group">
-                <label for="cedula">Cedula o Ruc</label>
-                <ion-icon name="person-circle-outline"></ion-icon>
-                <input id="cedula" type="number" name="cedula" placeholder="Cedula" class="form-control"   minlength="10" maxlength="13" required>
+        <div class="card align-items-center">
+            <div class="row justify-content-center mt-2 mb-2">
+                <div class="col-md-3">
+                    <div class="form-group text-center">
+                        <label for="cedula">Cédula o Ruc</label>
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <input id="cedula" type="text" name="cedula" placeholder="Cedula" class="form-control" minlength="10" maxlength="13"  required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group text-center">
+                        <label for="nombres">Nombres</label>
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <input id="nombres" type="text" name="nombres" placeholder="Nombres" class="form-control" maxlength="50" required>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group text-center">
+                        <label for="apellidos">Apellidos</label>
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <input id="apellidos" type="text" name="apellidos" placeholder="Apellidos" maxlength="50" class="form-control" required>
+                    </div>
+                </div>
+                    
             </div>
-            <div class="form-group">
-                <label for="nombres">Nombres</label>
-                <ion-icon name="person-circle-outline"></ion-icon>
-                <input id="nombres" type="text" name="nombres" placeholder="Nombres" class="form-control" maxlength="50" required>
+            <div class="row justify-content-center mb-2">
+                <div  class="col-md-9 mb-2">
+                    <div class="form-group text-center">
+                        <label for="direccion">Dirección</label>
+                        <ion-icon name="home-outline"></ion-icon>
+                        <input id="direccion" type="text" placeholder="Dirección" name="direccion" maxlength="100" class="form-control" required>
+                      </div>
+                    
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="form-group text-center">
+                        <label for="contacto">Contacto</label>
+                        <ion-icon name="call-outline"></ion-icon>
+                        <input id="celular" type="text" placeholder="celular" name="celular" minlength="10" maxlength="10"  class="form-control" required>
+                    </div>
+                    
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="form-group text-center">
+                        <label for="email">Correo Electronico</label>
+                        <ion-icon name="mail-outline"></ion-icon>
+                        <input id="email" type="email" placeholder="e-mail" name="email" maxlength="45" class="form-control" required>
+                    </div>                
+                </div>
+                <button type="submit" class="btn btn-primary"  title="agregar" name="agregar">+ Agregar</button>
             </div>
-            <div class="form-group">
-                <label for="apellidos">Apellidos</label>
-                <ion-icon name="person-circle-outline"></ion-icon>
-                <input id="apellidos" type="text" name="apellidos" placeholder="Apellidos" maxlength="50" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="direccion">Dirección</label>
-                <ion-icon name="home-outline"></ion-icon>
-                <input id="direccion" type="text" placeholder="Dirección" name="direccion" maxlength="100" class="form-control" required>
-              </div>
-              <div class="form-group">
-                <label for="email">Correo Electronico</label>
-                <ion-icon name="mail-outline"></ion-icon>
-                <input id="email" type="email" placeholder="e-mail" name="email" maxlength="45" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="contacto">Contacto</label>
-                <ion-icon name="call-outline"></ion-icon>
-                <input id="celular" type="number" placeholder="celular" name="celular" minlength="10" maxlength="10"  class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary"  title="agregar" name="agregar">+ Agregar</button>
         </div>                   
     </form>
 {% endblock %}

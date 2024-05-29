@@ -1,47 +1,68 @@
 {% extends 'base.html' %}
 
-{% block title %}Nuevo Cliente{% endblock %}
+{% block title %}Editar Cliente{% endblock %}
+
+{% block pageTitle %}
+GESTIÓN CLIENTES
+{% endblock %}
+{% block cenTitle %} EDITAR CLIENTES {% endblock %}
 
 {% block content %}
 
-    <h5 class="titulopags">Editar Cliente</h5>
-    <div class="lineapag"></div>
     <form id="editarCliente" action="{% url 'editarCliente' cliente.cedula %}" method="post">
         {% csrf_token %}  
-        <div class="card">
-            <div class="form-group">
-                <label for="cedula">Cedula o Ruc</label>
-                <ion-icon name="person-circle-outline"></ion-icon>
-                <input id="cedula" type="number" name="cedula" class="form-control" value="{{cliente.cedula}}"  minlength="10" maxlength="13"   required>
+        <div class="card align-items-center">
+            <div class="row justify-content-center mt-2 mb-2">
+                <div class="col-md-3">
+                    <div class="form-group text-center">
+                        <label for="cedula">Cedula o Ruc</label>
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <input id="cedula" type="number" name="cedula" class="form-control" value="{{cliente.cedula}}"  min="1000000000" max="9999999999999"   required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group text-center">
+                        <label for="nombres">Nombres</label>
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <input id="nombres" type="text" name="nombres" class="form-control" value="{{cliente.nombres}}" maxlength="50" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group text-center">
+                        <label for="apellidos">Apellidos</label>
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <input id="apellidos" type="text" name="apellidos" class="form-control"  value="{{cliente.apellidos}}" maxlength="50" required>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="nombres">Nombres</label>
-                <ion-icon name="person-circle-outline"></ion-icon>
-                <input id="nombres" type="text" name="nombres" class="form-control" value="{{cliente.nombres}}" maxlength="50" required>
-            </div>
-            <div class="form-group">
-                <label for="apellidos">Apellidos</label>
-                <ion-icon name="person-circle-outline"></ion-icon>
-                <input id="apellidos" type="text" name="apellidos" class="form-control"  value="{{cliente.apellidos}}" maxlength="50" required>
-            </div>
-            <div class="form-group">
-                <label for="direccion">Dirección</label>
-                <ion-icon name="home-outline"></ion-icon>
-                <input id="direccion" type="text" name="direccion" class="form-control" value="{{cliente.direccion}}" maxlength="100" required>
-              </div>
-              <div class="form-group">
-                <label for="email">Correo Electronico</label>
-                <ion-icon name="mail-outline"></ion-icon>
-                <input id="email" type="email"  name="email"  class="form-control" value="{{cliente.email}}" maxlength="45" required>
-            </div>
-            <div class="form-group">
-                <label for="contacto">Contacto</label>
-                <ion-icon name="call-outline"></ion-icon>
-                <input id="celular" type="number"  name="celular"  class="form-control" minlength="10" maxlength="10" value="{{cliente.celular}}" required>
-            </div>
-            <button type="submit" class="btn btn-primary"  title="guardar" name="guardar">Guardar</button>
-        </div>                   
+            <div class="row justify-content-center mt-2 mb-2">
+                    <div  class="col-md-9 mb-2">
+                        <div class="form-group text-center">
+                            <label for="direccion">Dirección</label>
+                            <ion-icon name="home-outline"></ion-icon>
+                            <input id="direccion" type="text" name="direccion" class="form-control" value="{{cliente.direccion}}" maxlength="100" required>
+                          </div>  
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="form-group text-center">
+                            <label for="email">Correo Electronico</label>
+                            <ion-icon name="mail-outline"></ion-icon>
+                            <input id="email" type="email"  name="email"  class="form-control" value="{{cliente.email}}" maxlength="45" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="form-group text-center">
+                            <label for="contacto">Contacto</label>
+                            <ion-icon name="call-outline"></ion-icon>
+                            <input id="celular" type="number"  name="celular"  class="form-control" minlength="10" maxlength="10" value="{{cliente.celular}}" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary"  title="guardar" name="guardar">Guardar</button>
+            </div>                   
+        </div>
+            
     </form>
     
 
 {% endblock %}
+
