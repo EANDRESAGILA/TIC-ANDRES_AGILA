@@ -61,7 +61,6 @@ def base(request):
 def nuevoC(request):
     if request.method == 'POST':
         cedula = request.POST.get('cedula')
-        
         # verificar si la cédula ya esta registrada
         try:
             clientes2= Cliente.objects.get(cedula=cedula)
@@ -69,7 +68,6 @@ def nuevoC(request):
             return render(request, "nuevoC.html")
         except ObjectDoesNotExist:
             pass
-
         # guardar el nuevo cliente
         clientes2 = Cliente(
             user=request.user,
@@ -227,17 +225,14 @@ def listaPrecios(request):
     if request.method == 'POST':
         nombre_codigo = request.POST.get('nombre_codigo')   
         precio = request.POST.get('precio')
-
         if not precio:
             messages.error(request, 'Debe proporcionar el precio del producto.')
             return redirect('listaPrecios')
-
         producto = None
         try:
             # intentamos encontrar el producto por su código
             producto = Producto.objects.get(codigo_producto=nombre_codigo)
         except Producto.DoesNotExist:
-            
             try:
                 # si no se encuentra por código, intentamos encontrarlo por nombre
                 producto = Producto.objects.get(nombre_articulo=nombre_codigo)
@@ -245,12 +240,10 @@ def listaPrecios(request):
                 # si no se encuentra por nombre ni por código, mostramos un mensaje de error
                 messages.error(request, 'No se encontró ningún producto con el nombre o código ingresado')
                 return redirect('listaPrecios')
-
         # si se encontró el producto, actualizamos su precio
         producto.precio = precio
         producto.save()
         messages.success(request, 'El precio del producto se ha actualizado correctamente.')
-        
         return redirect('listaPrecios')
     else:
         listaI = Producto.objects.all()
@@ -265,14 +258,10 @@ def eliminarPrecio(request, codigo_producto):
     except Producto.DoesNotExist:
         messages.success(request, 'El producto no existe.')
         return redirect('listaPrecios')
-
     # si exsiste actualiza el precio del producto a 0
-    
     producto.precio = 0
     producto.save()
     messages.success(request, 'El precio se borro ($0).')
-
-    # Redirige de vuelta a la lista de precios
     return redirect('listaPrecios')  
 
 
@@ -403,10 +392,20 @@ def factura(request):
     return render(request, "factura.html", context)
 
 @login_required 
-def editarF(request, numeroF):
+def visualizarVenta(request, numeroF):
     factura = get_object_or_404(Factura, numeroF=numeroF)
     ventas = Venta.objects.filter(factura=factura)
     
+    context = {
+        'factura': factura,
+        'ventas': ventas,
+    }
+    return render(request, 'visualizarVenta.html', context)
+
+@login_required 
+def editarF(request, numeroF):
+    factura = get_object_or_404(Factura, numeroF=numeroF)
+    ventas = Venta.objects.filter(factura=factura)
 
     if request.method == 'POST':
         # actualizo los datos de la factura

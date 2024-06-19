@@ -28,6 +28,7 @@ urlpatterns = [
     path('clientes/', views.clientes, name="clientes"),
     path('nuevoC/', views.nuevoC, name="nuevoC"),
     path('factura/', views.factura,name="factura"),
+     path('visualizarVenta/<numeroF>', views.visualizarVenta,name="visualizarVenta"),
     path('autoCliente/', views.autoCliente, name='autoCliente'),
     path('autoProducto/', views.autoProducto, name='autoProducto'),
     path('editarF/<numeroF>', views.editarF,name="editarF"),
