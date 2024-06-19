@@ -9,59 +9,46 @@ GESTIÓN CLIENTES
 
 {% block content %}
 
-    <form id="editarCliente" action="{% url 'editarCliente' cliente.cedula %}" method="post">
-        {% csrf_token %}  
-        <div class="card align-items-center">
-            <div class="row justify-content-center mt-2 mb-2">
-                <div class="col-md-3">
-                    <div class="form-group text-center">
-                        <label for="cedula">Cedula o Ruc</label>
-                        <ion-icon name="person-circle-outline"></ion-icon>
-                        <input id="cedula" type="number" name="cedula" class="form-control" value="{{cliente.cedula}}"  min="1000000000" max="9999999999999"   required>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group text-center">
-                        <label for="nombres">Nombres</label>
-                        <ion-icon name="person-circle-outline"></ion-icon>
-                        <input id="nombres" type="text" name="nombres" class="form-control" value="{{cliente.nombres}}" maxlength="50" required>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group text-center">
-                        <label for="apellidos">Apellidos</label>
-                        <ion-icon name="person-circle-outline"></ion-icon>
-                        <input id="apellidos" type="text" name="apellidos" class="form-control"  value="{{cliente.apellidos}}" maxlength="50" required>
-                    </div>
-                </div>
+
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2>Editar Cliente</h2>
             </div>
-            <div class="row justify-content-center mt-2 mb-2">
-                    <div  class="col-md-9 mb-2">
-                        <div class="form-group text-center">
-                            <label for="direccion">Dirección</label>
-                            <ion-icon name="home-outline"></ion-icon>
-                            <input id="direccion" type="text" name="direccion" class="form-control" value="{{cliente.direccion}}" maxlength="100" required>
-                          </div>  
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="form-group text-center">
-                            <label for="email">Correo Electronico</label>
-                            <ion-icon name="mail-outline"></ion-icon>
-                            <input id="email" type="email"  name="email"  class="form-control" value="{{cliente.email}}" maxlength="45" required>
+            <div class="card-body">
+                <form method="POST" action="{% url 'editarCliente' cliente.cedula %}">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <label for="numeroFactura" class="col-sm-2 col-form-label">Cedula o Ruc</label>
+                        <div class="col-sm-4">
+                            <input id="cedula" type="text" name="cedula" value="{{cliente.cedula}}" class="form-control" minlength="10" maxlength="13" required>
+                        </div>
+                        <label for="fecha" class="col-sm-2 col-form-label">Contacto</label>
+                        <div class="col-sm-4">
+                            <input id="celular" type="text" value="{{cliente.celular}}" name="celular" minlength="10" maxlength="10"  class="form-control" required>
                         </div>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="form-group text-center">
-                            <label for="contacto">Contacto</label>
-                            <ion-icon name="call-outline"></ion-icon>
-                            <input id="celular" type="number"  name="celular"  class="form-control" minlength="10" maxlength="10" value="{{cliente.celular}}" required>
+                    <div class="form-group row">
+                        <label for="cedula" class="col-sm-2 col-form-label">Nombres Completos</label>
+                        <div class="col-sm-10">
+                            <input id="nombres" type="text" name="nombres"  value="{{cliente.nombres}}" class="form-control" maxlength="50" required>
+                       
+                    </div>
+                    <div class="form-group row">
+                        <label for="contacto" class="col-sm-2 col-form-label">Dirección</label>
+                        <div class="col-sm-5">
+                            <input id="direccion" type="text" value="{{cliente.direccion}}" name="direccion" maxlength="100" class="form-control" required>
+                        </div>
+                        <label for="email" class="col-sm-1 col-form-label">Email</label>
+                        <div class="col-sm-4">
+                            <input id="email" type="email" value="{{cliente.email}}" name="email" maxlength="45" class="form-control" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary"  title="guardar" name="guardar">Guardar</button>
-            </div>                   
+                    <button type="submit" class="btn btn-info btnGuardar"  title="agregar" name="agregar">Guardar Cambios</button>
+                </form>
+            </div>
         </div>
-            
-    </form>
+    </div>
     
 
 {% endblock %}

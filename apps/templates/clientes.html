@@ -8,7 +8,12 @@ GESTIÓN CLIENTES
 {% block cenTitle %} LISTADO DE CLIENTES {% endblock %}
 
 {% block content %}
-    <!-- Aquí va el contenido específico de esta página -->
+
+<form method="get" class="form-inline mb-2 justify-content-center">
+    <input type="text" name="busqueda" class="form-control mr-2" placeholder="Cedula o Nombre ">
+    <button type="submit" class="btn btn-info">Buscar</button>
+</form>
+
 
     <div class="row">
         <div class="col-sm-12 col-md-6 col-lg-12 col-xl-12">
@@ -19,7 +24,6 @@ GESTIÓN CLIENTES
                                 <th>#</th>
                                 <th>Cedula</th>
                                 <th>Nombres</th>
-                                <th>Apellidos</th>
                                 <th>Dirección</th>
                                 <th>Correo</th>
                                 <th>Contacto</th>
@@ -33,7 +37,6 @@ GESTIÓN CLIENTES
                             <td>{{forloop.counter}}</td>
                             <td>{{x.cedula}}</td>
                             <td>{{x.nombres}}</td>
-                            <td>{{x.apellidos}}</td>
                             <td>{{x.direccion}}</td>
                             <td>{{x.email}}</td>
                             <td>{{x.celular}}</td>

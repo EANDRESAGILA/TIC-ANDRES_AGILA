@@ -1,0 +1,53 @@
+{% load static %}
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href= "{% static 'css/style.css' %}">
+  <link rel="stylesheet" href= "{% static '/css/messages.css' %}">
+  <title>Login System</title>
+</head>
+<body>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="alert">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+  <div id="contenedor">
+            
+    <div id="contenedorcentrado">
+        <div id="login">
+            <form id="loginform" method="post" action="">
+                {% csrf_token %}
+                <label for="username">Usuario</label>
+                <input id="username" type="text" name="username" placeholder="Usuario" required>
+                
+                <label for="password1">Contraseña</label>
+                <input id="password1" type="password" placeholder="Contraseña" name="password1" required>
+
+                <label for="password2">Verifica Contraseña</label>
+                <input id="password2" type="password" placeholder="Contraseña" name="password2" required>
+                            
+                <button type="submit">Registrar</button>
+            </form>  
+        </div>
+        <div id="derecho">
+            <div class="titulo">
+                Sistema de Administración Comercial 
+            </div>
+            <hr>
+            <div class="pie-form">
+                <a href="login">Iniciar Sesión</a>
+
+            </div>
+        </div>
+    </div>
+</div>
+  
+
+</body>
+</html>

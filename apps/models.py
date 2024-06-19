@@ -1,44 +1,53 @@
 from django.db import models
-from django.db.models import F
+from django.contrib.auth.models import User
+
+
 # Create your models here.
 
-class Clientes(models.Model):
-    cedula=models.CharField(primary_key=True, max_length=13, null=False)
-    nombres=models.CharField(max_length=50, null=False)
-    apellidos=models.CharField(max_length=50, null=False)
+class Cliente(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    cedula=models.CharField(primary_key=True, max_length=13 ,null=False)
+    nombres=models.CharField(max_length=150, null=False)
     direccion=models.CharField(max_length=100, null=False)
     email = models.EmailField(max_length=45)
     celular=models.CharField(max_length=10, null=False)
 
     class Meta:
-        db_table = 'tabla_clientes'
+        db_table = 'tabla_Cliente'
     
-class Productos(models.Model):
-    codigo_producto = models.CharField(primary_key=True, max_length=20)
+class Producto(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    codigo_producto = models.CharField(primary_key=True, max_length=9)
     nombre_articulo = models.CharField(max_length=90)
     unidades = models.IntegerField()
+    precio= models.DecimalField(max_digits=10, decimal_places=2, default=0)
     class Meta:
-        db_table = 'tabla_Productos'
+        db_table = 'tabla_Producto'
 
-    def restar_unidades(self, unidades_vendidas):
-        self.unidades = F('unidades') - unidades_vendidas
-        self.save()
 
-class Precios(models.Model):
-    producto = models.ForeignKey(Productos, on_delete=models.CASCADE)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
-
+class Factura(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    numeroF= models.AutoField(primary_key=True)
+    fecha = models.DateField() 
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    formaPago = models.CharField(max_length=50)
+    observaciones = models.TextField(blank=True)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    iva = models.DecimalField(max_digits=10, decimal_places=2)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+       
     class Meta:
-        db_table = 'tabla_Precios'
+        db_table = 'tabla_Factura'  
 
 
-class Ventas(models.Model):
-    cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
-    articulo = models.ForeignKey(Productos, on_delete=models.CASCADE)
+class Venta(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    factura = models.ForeignKey(Factura, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     unidades = models.IntegerField()
-    valor_total = models.DecimalField(max_digits=10, decimal_places=2)
-    fecha = models.DateField(auto_now_add=True)
-    class Meta:
-        db_table = 'tabla_Ventas'
-
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     
+           
+    class Meta:
+        db_table = 'tabla_Venta'

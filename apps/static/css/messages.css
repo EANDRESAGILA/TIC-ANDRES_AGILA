@@ -1,0 +1,38 @@
+.messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 300px;
+    padding: 5px;
+    background:linear-gradient( #bcd5ea,#1414e8);
+    border: 2px solid #181818;
+    border-radius: 10px;
+    list-style: none;
+    text-align: center;
+    animation: fadeOut 1s ease-out forwards 3s;
+}
+
+.messages li {
+    margin-bottom: 5px;
+}
+
+.messages li:first-child {
+    margin-top: 0;
+}
+
+.messages li:last-child {
+    margin-bottom: 0;
+}
+
+.messages .alert {
+    padding: 10px;
+    background: linear-gradient(#1414e8, #b4d4ee) ;
+    border-radius: 10px;
+}
+
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}

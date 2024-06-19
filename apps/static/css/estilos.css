@@ -1,19 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500&display=swap');
 :root{
-    --color-barra-lateral:  rgb(158, 241, 254);
+    --color-barra-lateral: gray ;
 
-    --color-texto:rgb(0, 0, 0);
-    --color-texto-menu:rgb(83, 83, 88);
+    --color-texto:rgb(253, 253, 253);
+    --color-texto-menu:rgb(255, 255, 255);
 
-    --color-menu-hover:rgb(0,0,0);
-    --color-menu-hover-texto:rgb(255, 255, 255);
+    --color-menu-hover:rgb(60, 219, 121);
+    --color-menu-hover-texto:rgb(0, 0, 0);
 
-    --color-boton:#11101d;
+    --color-boton:#101a1d;
     --color-boton-texto:rgb(255, 255, 255);
 
     --color-linea:rgb(83, 83, 88);
 
-    --color-scroll:rgb(68,69,74);
+    --color-scroll:rgb(60, 219, 121);
     --color-scroll-hover:rgb(83, 83, 88);
 }
 
@@ -26,13 +26,9 @@
 body{
     height: 100vh;
     width: 100%;
-    background-color: rgb(250, 255, 255);
+    background: linear-gradient( to right top,  rgb(255, 255, 255), rgb(213, 248, 252) , rgb(238, 232, 232),  rgb(238, 252, 253), rgb(255, 255, 255));
 }
 
-.ul .messages {
-    text-align: right;
-    text-decoration-color: aqua;
- }
     
 /*-----------------Menu*/
 .menu{
@@ -61,7 +57,8 @@ body{
     height: 100%;
     overflow: hidden;
     padding: 20px 15pX;
-    background-color: var(--color-barra-lateral);
+    background: linear-gradient( to right top,rgb(0, 0, 0) , gray);
+    border-top-right-radius: 20px;
     transition: width 0.5s ease,background-color 0.3s ease,left 0.5s ease;
     z-index: 50;
 }

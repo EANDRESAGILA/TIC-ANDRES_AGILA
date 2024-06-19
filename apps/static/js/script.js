@@ -4,6 +4,7 @@ const spans = document.querySelectorAll("span");
 const menu = document.querySelector(".menu");
 const main = document.querySelector("main");
 
+
 menu.addEventListener("click",()=>{
     barraLateral.classList.toggle("max-barra-lateral");
     if(barraLateral.classList.contains("max-barra-lateral")){
@@ -23,6 +24,7 @@ menu.addEventListener("click",()=>{
     }
 });
 
+
 grid.addEventListener("click",()=>{
     barraLateral.classList.toggle("mini-barra-lateral");
     main.classList.toggle("min-main");
@@ -30,5 +32,4 @@ grid.addEventListener("click",()=>{
         span.classList.toggle("oculto");
     });
 });
-
 

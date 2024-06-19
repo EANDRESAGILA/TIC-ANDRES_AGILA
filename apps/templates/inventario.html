@@ -8,7 +8,7 @@ INVENTARIO
 
 {% block content %}
     <!-- Aquí va el contenido específico de esta página -->
-    <form id="formInventario" action="." method="post">
+<form id="formInventario" action="." method="post">
         {% csrf_token %}  
         <div class="card align-items-center">
             <div class="row justify-content-center mt-2 mb-2">
@@ -30,16 +30,47 @@ INVENTARIO
                         <input id="unidades" type="number" name="unidades" placeholder="18" class="form-control" min="1" required>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary"  title="agregar" name="agregar">+ Agregar</button>
+                <div class="col-md-1  mt-4 align-items-end">
+                    <button type="submit" class="btn btn-info btnGuardar" title="agregar" name="agregar">Agregar</button>
                 </div>
-            </div>                       
-    </form>
+            </div>
+        </div>
+                                  
+</form>
+
+
 
     <div class="lineapag"></div>
 
         <h5 class="titulop">LISTA DE PRODUCTOS</h5>
         
-        <div class="lineapag"></div>
+    <div class="lineapag"></div>
+    <form id="formInventario" action="." method="post">
+        {% csrf_token %}  
+        <div class="card align-items-center">
+            <div class="row justify-content-center mt-1 mb-2">
+               
+                <div class="col-md-5">
+                    <div class="form-group text-center">
+                        <label for="nombre_codigo">Nombre o Codigo del Producto</label>
+                        <input id="nombre_codigo" type="text" name="nombre_codigo" placeholder="Juego de sala - 0002" class="form-control" maxlength="50" >
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group text-center">
+                        <label for="unidades2">Stock Unidades</label>
+                        <input id="unidades2" type="number" name="unidades2" placeholder="18" class="form-control" step="0.01" min="1" required>
+                    </div>
+                </div>
+                <div class="col-md-3 mt-4">
+                    <button type="submit" class="btn btn-info btnGuardar"  title="actualizar" name="actualizar">Actualizar</button>
+                </div>
+                
+            </div>
+        </div>                       
+    </form>
+
+
 
     <div class="row">
         <div class="col-sm-12 col-md-6 col-lg-12 col-xl-12 ">

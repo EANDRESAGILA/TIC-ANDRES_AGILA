@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Venta{% endblock %}
+
+{% block pageTitle %}
+EDITAR VENTA
+{% endblock %}
+{% block cenTitle %} EDITAR VENTA {% endblock %}
+
+{% block content %}
+
+
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2>Editar Documento de Venta</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <label for="numeroFactura" class="col-sm-2 col-form-label">Factura Nro</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="numeroFactura" name="numeroFactura" value="{{ factura.numeroF }}" readonly>
+                        </div>
+                        <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+                        <div class="col-sm-4">
+                            <input type="date" class="form-control" id="fecha" name="fecha" value="{{ factura.fecha }}" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="cedula" class="col-sm-2 col-form-label">Cédula</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="cedula" name="cedula" value="{{ factura.cliente.cedula }}" readonly>
+                        </div>
+                        <label for="cliente" class="col-sm-2 col-form-label">Cliente</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="cliente" name="cliente" value="{{ factura.cliente.nombres }}" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="contacto" class="col-sm-2 col-form-label">Contacto</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="contacto" name="contacto" value="{{ factura.cliente.celular }}" readonly>
+                        </div>
+                        <label for="email" class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-4">
+                            <input type="email" class="form-control" id="email" name="email" value="{{ factura.cliente.email }}" readonly>
+                        </div>
+                    </div>
+
+                    <h4>Productos</h4>
+                    <div class="product-headers row mb-2">
+                        <div class="col-md-3"><strong>Código Producto</strong></div>
+                        <div class="col-md-3"><strong>Nombre Producto</strong></div>
+                        <div class="col-md-2"><strong>Unidades</strong></div>
+                        <div class="col-md-2"><strong>Precio</strong></div>
+                        <div class="col-md-2"><strong>Subtotal</strong></div>
+                    </div>
+                    <div id="product-container">
+                        {% for venta in ventas %}
+    <div class="product-row row">
+        <div class="col-md-3">
+            <input type="text" class="form-control codigo_producto" name="codigo_producto[]" value="{{ venta.producto.codigo_producto }}" required>
+        </div>
+        <div class="col-md-3">
+            <input type="text" class="form-control nombre_articulo" name="nombre_producto[]" value="{{ venta.producto.nombre_articulo }}" required readonly>
+        </div>
+        <div class="col-md-2">
+            <input type="number" class="form-control" min="1" name="unidades[]" value="{{ venta.unidades }}" required>
+        </div>
+        <div class="col-md-2">
+            <input type="number" class="form-control precio" step="0.01" min="1" name="precio[]" value="{{ venta.precio|floatformat:"0,10" }}" required>
+        </div>        
+        <div class="col-md-2">
+            <input type="number" class="form-control subtotal_producto" name="subtotal_producto[]"  step="0.01" min="1" readonly>
+        </div>
+    </div>
+{% endfor %}
+
+                    </div>
+                    
+                    <button type="button" class="btn btn-secondary mt-3" id="add-product">Agregar Producto</button>
+
+                    <div class="form-group row mt-4">
+                        <div class="col-md-6">
+                            <label for="forma_pago" class="col-form-label">Forma de Pago</label>
+                            <select class="form-control" id="forma_pago" name="forma_pago" required>
+                                <option value="efectivo" {% if factura.formaPago == 'efectivo' %}selected{% endif %}>Efectivo</option>
+                                <option value="transferencia" {% if factura.formaPago == 'transferencia' %}selected{% endif %}>Transferencia</option>
+                                <option value="cheque" {% if factura.formaPago == 'cheque' %}selected{% endif %}>Cheque</option>
+                                <option value="otro" {% if factura.formaPago == 'otro' %}selected{% endif %}>Otro</option>
+                            </select>
+                            <label for="observaciones" class="col-form-label mt-3">Observaciones</label>
+                            <textarea class="form-control" id="observaciones" name="observaciones" rows="3">{{ factura.observaciones }}</textarea>
+                        </div>
+                        <div class="col-md-6 mt-5">
+                            <div class="form-group row">
+                                <label for="subtotal" class="col-sm-4 col-form-label">Subtotal</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="subtotal" name="subtotal" step="0.01" min="1" value="{{ factura.subtotal }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="iva" class="col-sm-4 col-form-label">IVA</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="iva" name="iva" step="0.01" min="1" value="{{ factura.iva }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="total" class="col-sm-4 col-form-label">Total</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="total" name="total" step="0.01" min="1" value="{{ factura.total }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-info btnGuardar">Guardar Factura</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+       $(document).ready(function() {
+        function updateSubtotal() {
+        const productRows = $('.product-row');
+        let subtotal = 0;
+        productRows.each(function() {
+            const unidades = parseFloat($(this).find('[name="unidades[]"]').val()) || 0;
+            const precio = parseFloat($(this).find('[name="precio[]"]').val()) || 0;
+            const subtotalProducto = unidades * precio;
+            $(this).find('[name="subtotal_producto[]"]').val(subtotalProducto.toFixed(2));
+            subtotal += subtotalProducto;
+            
+        });
+        $('#subtotal').val(subtotal.toFixed(2));
+        updateTotal();
+    }
+
+    function updateTotal() {
+        const subtotal = parseFloat($('#subtotal').val()) || 0;
+        const iva = subtotal * 0.15; 
+        const total = subtotal + iva;
+        $('#iva').val(iva.toFixed(2));
+        $('#total').val(total.toFixed(2));
+    }
+
+    
+    $('[name="unidades[]"], [name="precio[]"]').on('input', updateSubtotal);
+
+    
+    $('#add-product').on('click', function() {
+        const productContainer = $('#product-container');
+        const newRow = $(`
+            <div class="product-row row">
+                <div class="col-md-3">
+                    <input type="text" class="form-control codigo_producto" name="codigo_producto[]" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control nombre_articulo" name="nombre_producto[]" required readonly>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" min="1" name="unidades[]" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control precio" step="0.01" min="1" name="precio[]" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control subtotal_producto" name="subtotal_producto[]" step="0.01" min="1" readonly>
+                </div>
+            </div>
+        `);
+        productContainer.append(newRow);
+
+        // escucahr si se ingresa nuevos unidades  precioss
+        newRow.find('[name="unidades[]"], [name="precio[]"]').on('input', updateSubtotal);
+    });
+
+    // completar datos prodicto
+    $(document).on('blur', '.codigo_producto', function() {
+        const codigoProducto = $(this).val();
+        const $fila = $(this).closest('.product-row');
+        $.ajax({
+            url: '{% url "autoProducto" %}',
+            data: { 'codigo_producto': codigoProducto },
+            success: function(data) {
+                $fila.find('.nombre_articulo').val(data.nombre_articulo);
+                $fila.find('.precio').val(data.precio);
+                updateSubtotal();
+            },
+            error: function() {
+                $fila.find('.nombre_articulo').val('');
+                $fila.find('.precio').val('');
+                updateSubtotal();
+            }
+        });
+    });
+
+
+    updateSubtotal();
+});
+
+               
+    </script>
+{% endblock %}
+
+       

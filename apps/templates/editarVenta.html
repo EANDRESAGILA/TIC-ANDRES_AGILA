@@ -42,15 +42,15 @@ GESTIÓN VENTAS
             </div>
             <div class="col-md-2 text-center">
                 <label for="unidades">Unidades</label>
-                <input type="number" class="form-control unidades" name="unidades" value="{{ venta.unidades }}">
+                <input type="number" class="form-control unidades" name="unidades" value="{{ venta.unidades }}" min="1">
             </div>
             <div class="col-md-2 text-center">
                 <label for="precio_unitario">Precio U</label>
-                <input type="decimal" class="form-control precio-unitario" name="precio_unitario" value="{{ producto.precios_set.first.precio }}" readonly> 
+                <input type="number" class="form-control precio-unitario" name="precio_unitario" value="{{ producto.precios_set.first.precio }}" readonly> 
             </div>
             <div class="col-md-3 text-center">
                 <label for="valor_total">Total</label>
-                <input type="decimal" class="form-control valor-total" name="valor_total" value="{{ venta.valor_total }}" readonly>
+                <input type="number" class="form-control valor-total" name="valor_total" value="{{ venta.valor_total }}" readonly>
             </div>
         </div>
     </div>
@@ -63,127 +63,70 @@ GESTIÓN VENTAS
     </div>
 </form>
 
-
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
-        // autocompletar cliente
-        $('#cliente').on('blur', function() {
-            var cedula = $(this).val();
-            $.ajax({
-                url: '{% url "obtener_cliente" %}',
-                data: {'cedula': cedula},
-                success: function(data) {
-                    $('#nombres').val(data.nombres);
-                    $('#apellidos').val(data.apellidos);
-                },
-                error: function() {
-                    $('#nombres').val('');
-                    $('#apellidos').val('');
-                }
-            });
-        });
-
-        // autocompletar producto
-        $(document).on('blur', '.codigo-producto', function() {
-            var codigoProducto = $(this).val();
-            var $fila = $(this).closest('.producto-item');
-            $.ajax({
-                url: '{% url "obtener_producto" %}',
-                data: {'codigo_producto': codigoProducto},
-                success: function(data) {
-                    $fila.find('.detalle-producto').val(data.nombre_articulo);
-                    $fila.find('.precio-unitario').val(data.precio);
-                },
-                error: function() {
-                    $fila.find('.detalle-producto').val('');
-                    $fila.find('.precio-unitario').val('');
-                }
-            });
-        });
-
-        // calculos
-        function calcularTotal($fila) {
-        var unidades = parseFloat($fila.find('.unidades').val());
-        var precioUnitario = parseFloat($fila.find('.precio-unitario').val());
-        var total = unidades * precioUnitario;
-        if (!isNaN(total)) {
-            $fila.find('.valor-total').val(total.toFixed(2));
+// autocompletar cliente
+$('#cliente').on('blur', function() {
+    var cedula = $(this).val();
+    $.ajax({
+        url: '{% url "obtener_cliente" %}',
+        data: {'cedula': cedula},
+        success: function(data) {
+            $('#nombres').val(data.nombres);
+            $('#apellidos').val(data.apellidos);
+        },
+        error: function() {
+            $('#nombres').val('');
+            $('#apellidos').val('');
         }
-    }
-
-    // calcular total cuando cambian las unidades o el precio
-    $(document).on('input', '.unidades, .precio-unitario', function() {
-        var $fila = $(this).closest('.producto-item');
-        calcularTotal($fila);
     });
-
-        //  agregar una nueva fila 
-        function agregarFilaVenta() {
-            var nuevaFila = `
-
-
-            <div class="row mb-3 producto-item">
-
-                <div class="col-md-2 text-center">
-                    <input type="text" class="form-control codigo-producto" name="articulo[]" placeholder="Código Producto">
-                </div>
-                <div class="col-md-3 text-center">
-                    <input type="text" class="form-control detalle-producto" name="detalle_producto[]" placeholder="Detalle Producto" readonly>
-                </div>
-                <div class="col-md-2 text-center">
-                    <input type="number" class="form-control unidades" name="unidades[]" placeholder="Unidades">
-                </div>
-                <div class="col-md-2 text-center">
-                    <input type="number" class="form-control precio-unitario" name="precio_unitario[]" placeholder="Costo" readonly>
-                </div>
-                <div class="col-md-3 text-center">
-                    <input type="number" class="form-control valor-total" name="valor_total[]" placeholder="Costo Total" readonly>
-                </div>
-            </div>
-        `;
-            $('#productos-container').append(nuevaFila);
-        }
-
-        // escuchar clic en el botón para agregar una nueva fila
-        $('#agregarFila').on('click', function() {
-            agregarFilaVenta();
-        });
-    });
-
-
-    //  calcular el subtotañ  iva totosal
-function calcularTotales() {
-var subtotal = 0;
-$('.producto-item').each(function() {
-    var unidades = parseFloat($(this).find('.unidades').val());
-    var precioUnitario = parseFloat($(this).find('.precio-unitario').val());
-    var total = unidades * precioUnitario;
-    if (!isNaN(total)) {
-        subtotal += total;
-    }
 });
-var iva = subtotal * 0.15; 
-var total = subtotal + iva;
 
-$('#subtotal').val(subtotal.toFixed(2));
-$('#iva').val(iva.toFixed(2));
-$('#total').val(total.toFixed(2));
+// autocompletar producto
+$(document).on('blur', '.codigo-producto', function() {
+    var codigoProducto = $(this).val();
+    var $fila = $(this).closest('.producto-item');
+    $.ajax({
+        url: '{% url "obtener_producto" %}',
+        data: {'codigo_producto': codigoProducto},
+        success: function(data) {
+            $fila.find('.detalle-producto').val(data.nombre_articulo);
+            $fila.find('.precio-unitario').val(data.precio);
+        },
+        error: function() {
+            $fila.find('.detalle-producto').val('');
+            $fila.find('.precio-unitario').val('');
+        }
+    });
+});
+
+// calculos
+function calcularTotal($fila) {
+var unidades = parseFloat($fila.find('.unidades').val());
+var precioUnitario = parseFloat($fila.find('.precio-unitario').val());
+var total = unidades * precioUnitario;
+if (!isNaN(total)) {
+    $fila.find('.valor-total').val(total.toFixed(2));
+}
 }
 
-// calculo totales 
+// calculo total cuando cambian las unidades o el precio
+$(document).on('input', '.unidades, .precio-unitario', function() {
+var $fila = $(this).closest('.producto-item');
+calcularTotal($fila);
+});
+});
+
+// calcular totales
 $(document).ready(function() {
 calcularTotales();
 });
 
-// Calculo totales al cambiar las unidades o el precio 
+// calcular totales al cambiar las unidades o el precio de los productos
 $(document).on('input', '.unidades, .precio-unitario', function() {
 calcularTotales();
 });
-
 </script>
-
 
 
 

@@ -1,11 +1,14 @@
-from django.shortcuts import render, redirect
-from .models import Clientes, Productos, Precios, Ventas
-from django.http import HttpResponseRedirect,JsonResponse
+from django.http import JsonResponse
+from django.shortcuts import render, redirect,get_object_or_404
+from .models import Cliente, Producto, Venta,Factura
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import F
-from django.contrib.auth import authenticate, login
-from datetime import date
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+
+
 
 # Create your views here.
 
@@ -13,6 +16,7 @@ TEMPLATES_DIRS =(
     'os.path.join(BASE_DIR, "templates")'
 
 )
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -25,33 +29,56 @@ def login_view(request):
         else:
             messages.error(request, 'Usuario o contraseña incorrectos.')
     return render(request, 'Login.html')
+
+
+def logout_view(request):
+    logout(request)
+    messages.error(request, 'Sesion Finalizada')
+    return redirect('login') 
+
+
+def registroUser(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Registro exitoso! Por favor inicia sesión.')
+            return redirect('login')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{field.capitalize()}: {error}')
+    else:
+        form = UserCreationForm()
+    return render(request, 'nuevoUser.html', {'form': form})
     
 
+@login_required
 def base(request):
     return render(request, 'base.html')
 
-
+@login_required
 def nuevoC(request):
     if request.method == 'POST':
         cedula = request.POST.get('cedula')
         
         # verificar si la cédula ya esta registrada
         try:
-            cliente_existente = Clientes.objects.get(cedula=cedula)
+            clientes2= Cliente.objects.get(cedula=cedula)
             messages.error(request, f'La cédula {cedula} ya está registrada.')
             return render(request, "nuevoC.html")
         except ObjectDoesNotExist:
             pass
 
         # guardar el nuevo cliente
-        clientes2 = Clientes(
+        clientes2 = Cliente(
+            user=request.user,
             cedula=request.POST.get('cedula'),
             nombres=request.POST.get('nombres'),
-            apellidos=request.POST.get('apellidos'),
             direccion=request.POST.get('direccion'),
             email=request.POST.get('email'),
             celular=request.POST.get('celular')
-        )
+         )
         clientes2.save()
         messages.success(request, 'Los datos del cliente han sido guardados correctamente.')
         return redirect("clientes")
@@ -59,41 +86,54 @@ def nuevoC(request):
         return render(request, "nuevoC.html")
     
 
-
-def ventas(request):
-    venta = Ventas.objects.all()
-    datos ={'venta' : venta}
-    return render(request,"ventas.html", datos)
-
+@login_required
 def clientes(request):
-    clientes1 = Clientes.objects.all()
-    datos = {'venta' : clientes1}
-    return render(request,"clientes.html", datos)
+    busqueda = request.GET.get('busqueda')
+    cliente = Cliente.objects.all()
 
+    if busqueda:
+        if busqueda.isdigit():  
+            cliente = cliente.filter(cedula__exact=busqueda)
+        else:
+            cliente = cliente.filter(
+                nombres__icontains=busqueda
+            )
+
+    context = {'venta': cliente, 'busqueda': busqueda}
+
+    if not cliente.exists() and busqueda:
+        messages.info(request, 'No existen registros con el nombre o cedula proporcionada.')
+        return redirect('clientes')
+
+    return render(request, "clientes.html", context)
+    
+
+@login_required
 def editarCliente(request, cedula):
     try:
-        cliente = Clientes.objects.get(cedula=cedula)
-    except Clientes.DoesNotExist:
+        cliente = Cliente.objects.get(cedula=cedula)
+    except Cliente.DoesNotExist:
         messages.error(request, 'El cliente que intentas editar no existe.')
-        return HttpResponseRedirect('/clientes/')  
+        return redirect("clientes")
 
     if request.method == 'POST':
         # actualizar y guardar los campos del cliente 
         cliente.nombres = request.POST.get('nombres')
-        cliente.apellidos = request.POST.get('apellidos')
         cliente.direccion = request.POST.get('direccion')
         cliente.email = request.POST.get('email')
         cliente.celular = request.POST.get('celular')
         cliente.save()
         messages.success(request, 'Los datos del cliente han sido actualizados correctamente.')
-        return HttpResponseRedirect('/clientes/')  
+        return redirect("clientes") 
 
     return render(request, "editarCliente.html", {'cliente': cliente})    
 
+
+@login_required
 def eliminarCliente(request, cedula):
    try:
-         cliente = Clientes.objects.get(cedula=cedula)
-   except Clientes.DoesNotExist:
+         cliente = Cliente.objects.get(cedula=cedula)
+   except Cliente.DoesNotExist:
         messages.error(request, 'El cliente que intentas eliminar no existe.')
         return redirect("clientes")  
    if request.method == 'POST':
@@ -102,42 +142,72 @@ def eliminarCliente(request, cedula):
         return redirect("clientes")  
    else:
         return render(request, "eliminarcliente.html", {'cliente': cliente})
-   
+
+
+
+@login_required
 def productos(request):
     if request.method == 'POST':
+        # Verifica si el formulario es para actualizar las unidades
+        if 'nombre_codigo' in request.POST:
+            nombre_codigo = request.POST.get('nombre_codigo')
+            unidades2 = request.POST.get('unidades2')
+
+            # Busca el producto por su nombre o código
+            try:
+                producto = Producto.objects.get(codigo_producto=nombre_codigo)
+            except Producto.DoesNotExist:
+                try:
+                    producto = Producto.objects.get(nombre_articulo=nombre_codigo)
+                except Producto.DoesNotExist:
+                    messages.error(request, 'No se encontró ningún producto con el nombre o código ingresado.')
+                    return redirect('productos')
+
+            # Actualiza las unidades del producto
+            producto.unidades = unidades2
+            producto.save()
+            messages.success(request, f'Se han actualizado las unidades del producto "{producto.codigo_producto}" "{producto.nombre_articulo} " correctamente.')
+            return redirect('productos')
+
+        # Si no es para actualizar unidades, entonces es para agregar un nuevo producto
         codigo_producto = request.POST.get('codigo_producto')
-        nombre_arituclo = request.POST.get('nombre_articulo')
+        nombre_articulo = request.POST.get('nombre_articulo')
         unidades = request.POST.get('unidades')
         
-        # verifica si ya existe un producto con el mismo codigo
-        if Productos.objects.filter(codigo_producto=codigo_producto).exists():
-            messages.error(request, f'El producto con código {codigo_producto} ya tiene inventario.')
+        # Verifica si ya existe un producto con el mismo código
+        if Producto.objects.filter(codigo_producto=codigo_producto).exists():
+            messages.error(request, f'El producto con código {codigo_producto} ya esta registrado en el inventario.')
         else:
             # guardar producto
-            inventarioN = Productos(codigo_producto=codigo_producto, nombre_articulo=nombre_arituclo, unidades=unidades)
+            inventarioN = Producto(user=request.user,codigo_producto=codigo_producto, nombre_articulo=nombre_articulo, unidades=unidades)
             inventarioN.save()
             messages.success(request, 'Los datos del producto han sido guardados correctamente.')
         
         # obtener la lista actualizada de productos
-        listaI = Productos.objects.all()
+        listaI = Producto.objects.all()
         datosli = {'inv': listaI}
         return render(request, "inventario.html", datosli)
     else:
         # si no es POST solo se  muestra la lista de productos
-        listaI = Productos.objects.all()
+        listaI = Producto.objects.all()
         datosli = {'inv': listaI}
         return render(request, "inventario.html", datosli)
+    
+    
 
-
+@login_required
 def eliminarProducto(request, codigo_producto):
-    producto = Productos.objects.get(codigo_producto=codigo_producto)
+    producto = Producto.objects.get(codigo_producto=codigo_producto)
     producto.delete()
+    messages.error(request, f'EL Producto {codigo_producto} eliminado correctamente.')
     return redirect('productos')
 
+
+@login_required
 def editarInventario(request, codigo_producto):
     try:
-        producto = Productos.objects.get(codigo_producto=codigo_producto)
-    except Productos.DoesNotExist:
+        producto = Producto.objects.get(codigo_producto=codigo_producto)
+    except Producto.DoesNotExist:
         messages.error(request, 'El producto seleccionado no existe.')
         return redirect('productos')
 
@@ -151,183 +221,235 @@ def editarInventario(request, codigo_producto):
     else:
         return render(request, 'inventario.html', {'producto': producto})
 
+
+@login_required
 def listaPrecios(request):
     if request.method == 'POST':
-        producto = request.POST.get('producto')
+        nombre_codigo = request.POST.get('nombre_codigo')   
         precio = request.POST.get('precio')
 
+        if not precio:
+            messages.error(request, 'Debe proporcionar el precio del producto.')
+            return redirect('listaPrecios')
+
+        producto = None
         try:
-            producto = Productos.objects.get(codigo_producto=producto)
-        except Productos.DoesNotExist:
-            messages.error(request, 'El producto especificado no existe.')
-            return redirect('listaPrecios')
+            # intentamos encontrar el producto por su código
+            producto = Producto.objects.get(codigo_producto=nombre_codigo)
+        except Producto.DoesNotExist:
+            
+            try:
+                # si no se encuentra por código, intentamos encontrarlo por nombre
+                producto = Producto.objects.get(nombre_articulo=nombre_codigo)
+            except Producto.DoesNotExist:
+                # si no se encuentra por nombre ni por código, mostramos un mensaje de error
+                messages.error(request, 'No se encontró ningún producto con el nombre o código ingresado')
+                return redirect('listaPrecios')
 
-        if Precios.objects.filter(producto=producto).exists():
-            messages.error(request, 'El producto ya esta registrado en la lista de precios.')
-            return redirect('listaPrecios')
-        else:
-            precio = Precios(producto=producto, precio=precio)
-            precio.save()
-            messages.success(request, 'El precio del producto ha sido asignado correctamente.')
-
-        return redirect('listaPrecios')     
-    else:
-        # si no es POST muestra la lista de productos
-        listaP = Precios.objects.all()
-        datosP = {'preci': listaP}
-        return render(request, "listaPrecios.html", datosP)
-
-def editarPrecio(request, producto):
-    try:
-        productObj = Productos.objects.get(codigo_producto=producto)
-    except Productos.DoesNotExist:
-        messages.error(request, 'El producto seleccionado no existe en el inventario.')
-        return redirect('listaPrecios')
-    try:
-        precios = Precios.objects.get(producto=productObj)
-    except Precios.DoesNotExist:
-        messages.error(request, 'No se encontró el producto en la lista de precios')
-        return redirect('listaPrecios')
-
-    if request.method == 'POST':
-        # actualizar precios
-        nuevoPrecio = request.POST.get('precio')
-        precios.precio = nuevoPrecio
-        precios.save()
-        messages.success(request, 'El precio del producto ha sido actualizado correctamente.')
+        # si se encontró el producto, actualizamos su precio
+        producto.precio = precio
+        producto.save()
+        messages.success(request, 'El precio del producto se ha actualizado correctamente.')
+        
         return redirect('listaPrecios')
     else:
-        return render(request, 'editarPrecio.html', {'precios': precios})
-    
+        listaI = Producto.objects.all()
+        datosli = {'inv': listaI}
+        return render(request, "listaPrecios.html", datosli)
 
-def eliminarPrecio(request, producto):
+
+@login_required   
+def eliminarPrecio(request, codigo_producto):
     try:
-        precio = Precios.objects.get(producto=producto)
-        if request.method == 'POST':
-            precio.delete()
-            messages.success(request, 'El precio ha sido eliminado correctamente.')
-            return redirect('listaPrecios')  
-        else:
-            return render(request, 'listaPrecios.html')  
-    except Precios.DoesNotExist:
-        messages.error(request, 'El precio que intentas eliminar no existe.')
-        return redirect('listaPrecios') 
-    
+        producto = Producto.objects.get(codigo_producto=codigo_producto)
+    except Producto.DoesNotExist:
+        messages.success(request, 'El producto no existe.')
+        return redirect('listaPrecios')
 
-def nuevaVenta(request):
+    # si exsiste actualiza el precio del producto a 0
+    
+    producto.precio = 0
+    producto.save()
+    messages.success(request, 'El precio se borro ($0).')
+
+    # Redirige de vuelta a la lista de precios
+    return redirect('listaPrecios')  
+
+
+
+@login_required
+def nuevaVenta(request):  
     if request.method == 'POST':
-        cliente_id = request.POST.get('cliente', '')
-        unidades_list = request.POST.getlist('unidades[]')
-        articulo_list = request.POST.getlist('articulo[]')
-        valor_total_list = request.POST.getlist('valor_total[]')
+        # Recuperar los datos del formulario
+        fecha = request.POST.get('fecha')
+        cedula_cliente = request.POST.get('cedula')
 
-        # verifica si el cliente existe en la base
-        cliente_existe = Clientes.objects.filter(cedula=cliente_id).exists()
+        # Verificar si el cliente existe en la base de datos
+        try:
+            cliente = Cliente.objects.get(cedula=cedula_cliente)
+        except Cliente.DoesNotExist:
+            messages.error(request, f'El cliente con cédula {cedula_cliente} no existe.')
+            return redirect('nuevaVenta')
 
-        if cliente_existe:
-            cliente = Clientes.objects.get(cedula=cliente_id)
-            productos_validos = True
-            ventas = []
+        forma_pago = request.POST.get('forma_pago')
+        observaciones = request.POST.get('observaciones')
 
-            for articulo_id, unidades, valor_total in zip(articulo_list, unidades_list, valor_total_list):
-                if Productos.objects.filter(codigo_producto=articulo_id).exists():
-                    producto = Productos.objects.get(codigo_producto=articulo_id)
-                    
-                    # verifica si el producto tiene un precio asignado
-                    if not Precios.objects.filter(producto=producto).exists():
-                        productos_validos = False
-                        messages.error(request, f'El producto con código {articulo_id} no tiene precio asignado.')
-                        break
+        # Verificar si todos los productos tienen suficiente stock antes de crear la factura y las ventas
+        productos_con_stock_insuficiente = []
+        for i in range(len(request.POST.getlist('codigo_producto[]'))):
+            codigo_producto = request.POST.getlist('codigo_producto[]')[i]
+            producto = get_object_or_404(Producto, codigo_producto=codigo_producto)
+            unidades = int(request.POST.getlist('unidades[]')[i])
 
-                    # verificar si hay suficiente stock
-                    if producto.unidades < int(unidades):
-                        productos_validos = False
-                        messages.error(request, f'No hay suficientes unidades disponibles del producto con código {articulo_id}.')
-                        break
-                    
-                    venta = Ventas(cliente=cliente, articulo=producto, unidades=int(unidades), valor_total=valor_total)
-                    ventas.append(venta)
-                else:
-                    productos_validos = False
-                    messages.error(request, f'El producto con código {articulo_id} no existe.')
-                    break
+            if unidades > producto.unidades or unidades <= 0:
+                productos_con_stock_insuficiente.append(codigo_producto)
 
-            if productos_validos:
-                for venta in ventas:
-                    venta.save()
+        if productos_con_stock_insuficiente:
+            messages.error(request, f'No hay suficiente stock para el producto: {", ".join(productos_con_stock_insuficiente)}.')
+            return redirect('nuevaVenta')
 
-                    # Restar unidades vendidas del inventario
-                    producto = venta.articulo
-                    producto.unidades -= int(venta.unidades)
-                    producto.save()
+        # Crear una nueva instancia de Factura y guardarla en la base de datos
+        factura = Factura.objects.create(user=request.user,fecha=fecha, cliente=cliente, formaPago=forma_pago,
+                                         observaciones=observaciones, subtotal=0, iva=0, total=0)
 
-                messages.success(request, 'La venta ha sido registrada correctamente.')
-                return redirect('nuevaVenta')
-        else:
-            messages.error(request, 'El cliente no existe.')
+        subtotal_general = 0  # Variable para calcular el subtotal general de la factura
 
-    return render(request, 'nuevaVenta.html')
+        for i in range(len(request.POST.getlist('codigo_producto[]'))):
+            codigo_producto = request.POST.getlist('codigo_producto[]')[i]
+            producto = get_object_or_404(Producto, codigo_producto=codigo_producto)
+            unidades = int(request.POST.getlist('unidades[]')[i])
+            precio = float(request.POST.getlist('precio[]')[i])
+
+            subtotal_producto = unidades * precio
+            subtotal_general += subtotal_producto
+
+            #crear instancia de venta y guardar en la base de datos
+            Venta.objects.create(user=request.user,factura=factura, producto=producto, unidades=unidades,
+                                 precio=precio, subtotal=subtotal_producto)
+
+            #actualizar el stock del producto
+            producto.unidades -= unidades
+            producto.save()
+
+        #actualizar el subtotal, iva y total de la factura
+        iva = subtotal_general * 0.15  
+        total = subtotal_general + iva
+        factura.subtotal = subtotal_general
+        factura.iva = iva
+        factura.total = total
+        factura.save()
+
+        messages.success(request, f'La factura {factura.numeroF} se ha registrado correctamente.')
+
+        return redirect('nuevaVenta')  
+    else:
+        return render(request, 'nuevaVenta.html')  
     
-def obtener_cliente(request):
+    
+
+ 
+@login_required  
+def autoCliente(request):
     cedula = request.GET.get('cedula', None)
-    if cedula and Clientes.objects.filter(cedula=cedula).exists():
-        cliente = Clientes.objects.get(cedula=cedula)
+    if cedula and Cliente.objects.filter(cedula=cedula).exists():
+        cliente = Cliente.objects.get(cedula=cedula)
         data = {
-            'nombres': cliente.nombres,
-            'apellidos': cliente.apellidos,
+            'cliente': cliente.nombres,
+            'contacto': cliente.celular,
+            'email': cliente.email,
         }
         return JsonResponse(data)
     return JsonResponse({'error': 'Cliente no encontrado'}, status=404)
+    
 
-def obtener_producto(request):
+    
+@login_required 
+def autoProducto(request):
     codigo_producto = request.GET.get('codigo_producto', None)
-    if codigo_producto and Productos.objects.filter(codigo_producto=codigo_producto).exists():
-        producto = Productos.objects.get(codigo_producto=codigo_producto)
-        precio = Precios.objects.filter(producto=producto).first().precio if Precios.objects.filter(producto=producto).exists() else None
+    if codigo_producto and Producto.objects.filter(codigo_producto=codigo_producto).exists():
+        producto = Producto.objects.get(codigo_producto=codigo_producto)
         data = {
             'nombre_articulo': producto.nombre_articulo,
-            'precio': precio,
+            'precio': producto.precio,
         }
         return JsonResponse(data)
     return JsonResponse({'error': 'Producto no encontrado'}, status=404)
+    
 
+@login_required     
+def factura(request):
+    busqueda = request.GET.get('busqueda')
+    user = request.user
+    facturas = Factura.objects.filter(user=user)
 
-def editarVenta(request, venta_id):
-    try:
-        venta = Ventas.objects.get(id=venta_id)
-    except Ventas.DoesNotExist:
-        messages.error(request, 'La venta que intentas editar no existe.')
-        return redirect('/ventas/')  
+    if busqueda:
+        if busqueda.isdigit():  
+            facturas = facturas.filter(numeroF__exact=busqueda).union(
+                facturas.filter(
+                    cliente__cedula__exact=busqueda
+                )
+            )
+        else:
+            facturas = facturas.filter(
+                cliente__nombres__icontains=busqueda
+            )
 
-    cliente = venta.cliente
-    producto = venta.articulo
+    context = {'fact': facturas, 'busqueda': busqueda}
+
+    if not facturas.exists() and busqueda:
+        messages.info(request, 'No existen registros con el número, cédula o nombre proporcionado.')
+        return redirect('factura')
+
+    return render(request, "factura.html", context)
+
+@login_required 
+def editarF(request, numeroF):
+    factura = get_object_or_404(Factura, numeroF=numeroF)
+    ventas = Venta.objects.filter(factura=factura)
+    
 
     if request.method == 'POST':
-        venta.unidades = request.POST.get('unidades')
-        venta.valor_total = request.POST.get('valor_total')
-        venta.fecha = date.today()
-        venta.save()
-        messages.success(request, 'Los datos de la venta han sido actualizados correctamente.')
-        return redirect('/ventas/') 
-    contexto = {
-        'cliente': cliente,
-        'venta': venta,
-        'producto': producto,
+        # actualizo los datos de la factura
+        factura.formaPago = request.POST.get('forma_pago')
+        factura.observaciones = request.POST.get('observaciones')
+        factura.subtotal = float(request.POST.get('subtotal'))
+        factura.iva = float(request.POST.get('iva'))
+        factura.total = float(request.POST.get('total'))
+        factura.save()
+
+        # listar ventas existentes y crear nuevas
+        ventas.delete()
+        for i in range(len(request.POST.getlist('codigo_producto[]'))):
+            codigo_producto = request.POST.getlist('codigo_producto[]')[i]
+            unidades = int(request.POST.getlist('unidades[]')[i])
+            precio = float(request.POST.getlist('precio[]')[i])
+            subtotal_producto = float(request.POST.getlist('subtotal_producto[]')[i])
+            
+            Venta.objects.create(
+                user=request.user,
+                factura=factura,
+                producto=Producto.objects.get(codigo_producto=codigo_producto),
+                unidades=unidades,
+                precio=precio,
+                subtotal=subtotal_producto
+            )
+        messages.success(request, 'Factura actualizada correctamente.')
+        return redirect('factura')
+
+    context = {
+        'factura': factura,
+        'ventas': ventas,
     }
-    return render(request, "editarVenta.html", contexto)
+    return render(request, 'editarFactura.html', context)
 
-def eliminarVenta(request, venta_id):
-    try:
-        venta = Ventas.objects.get(pk=venta_id)
-        if request.method == 'POST':
-            venta.delete()
-            messages.success(request, 'La venta ha sido eliminada correctamente.')
-            return redirect('ventas')
-        else:
-            return render(request, 'ventas.html')  
-    except Ventas.DoesNotExist:
-        messages.error(request, 'La venta que intentas eliminar no existe.')
-        return redirect('ventas')
 
+@login_required 
+def eliminarFactura(request, numeroF):
+    factura= Factura.objects.get(numeroF=numeroF)
+    factura.delete()
+    messages.error(request, f'La Factura #{numeroF} eliminada correctamente.')
+    return redirect('factura')
+
+@login_required 
 def dashboard(request):
     return render(request,"dashboard.html")

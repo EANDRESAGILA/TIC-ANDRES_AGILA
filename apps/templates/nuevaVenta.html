@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Nuevo Cliente{% endblock %}
 
@@ -7,213 +8,215 @@ NUEVA VENTA
 {% endblock %}
 {% block cenTitle %} REGISTRAR VENTA {% endblock %}
 
-
 {% block content %}
 
-    <form id="formVentas" action="" method="post">
-        {% csrf_token %}
-        
-        <div class="card align-items-center">
-            <div class="row justify-content-center mt-2 mb-3">
-                <div class="col-md-4 text-center">
-                    <label for="cliente">Cedula o Ruc</label>
-                    <input type="text" id="cliente" name="cliente" placeholder="Cédula" class="form-control">
-                </div>
-                <div class="col-md-4 text-center">
-                    <label for="nombres">Nombres</label>
-                    <input type="text" id="nombres" name="nombres" placeholder="Nombres" class="form-control" readonly>
-                </div>
-                <div class="col-md-4 text-center">
-                    <label for="apellidos">Apellidos</label>
-                    <input type="text" id="apellidos" name="apellidos" placeholder="Apellidos" class="form-control" readonly>
-                </div>
+
+  
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2>Documento de Venta</h2>
             </div>
-            
+            <div class="card-body">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <label for="numeroFactura" class="col-sm-2 col-form-label">Factura Nro</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="numeroFactura" name="numeroFactura" readonly>
+                        </div>
+                        <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+                        <div class="col-sm-4">
+                            <input type="date" class="form-control" id="fecha" name="fecha" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="cedula" class="col-sm-2 col-form-label">Cédula</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="cedula" minlength="10" maxlength="13" name="cedula" required>
+                        </div>
+                        <label for="cliente" class="col-sm-2 col-form-label">Cliente</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="cliente" name="cliente" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="contacto" class="col-sm-2 col-form-label">Contacto</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" id="contacto" name="contacto"  readonly>
+                        </div>
+                        <label for="email" class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-4">
+                            <input type="email" class="form-control" id="email" name="email"  readonly>
+                        </div>
+                    </div>
+
+                    <h4>Productos</h4>
+                    <div class="product-headers row mb-2">
+                        <div class="col-md-3"><strong>Código Producto</strong></div>
+                        <div class="col-md-3"><strong>Nombre Producto</strong></div>
+                        <div class="col-md-2"><strong>Unidades</strong></div>
+                        <div class="col-md-2"><strong>Precio</strong></div>
+                        <div class="col-md-2"><strong>Subtotal</strong></div>
+                    </div>
+                    <div id="product-container">
+                        <div class="product-row row">
+                            <div class="col-md-3">
+                                <input type="text" class="form-control codigo_producto" name="codigo_producto[]" required>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control nombre_articulo" name="nombre_producto[]" required readonly>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control" min="1" name="unidades[]" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control precio" name="precio[]"  step="0.01" min="1" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control" name="subtotal_producto[]"  step="0.01" min="1" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-secondary mt-3" id="add-product">Agregar Producto</button>
+
+                    <div class="form-group row mt-4">
+                        <div class="col-md-6">
+                            <label for="forma_pago" class="col-form-label">Forma de Pago</label>
+                            <select class="form-control" id="forma_pago" name="forma_pago" required>
+                                <option value="efectivo">Efectivo</option>
+                                <option value="transferencia">Transferencia</option>
+                                <option value="cheque">Cheque</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                            <label for="observaciones" class="col-form-label mt-3">Observaciones</label>
+                            <textarea class="form-control" id="observaciones" name="observaciones" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6 mt-5">
+                            <div class="form-group row">
+                                <label for="subtotal" class="col-sm-4 col-form-label">Subtotal</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="subtotal" name="subtotal" step="0.01" min="1" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="iva" class="col-sm-4 col-form-label">IVA</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="iva" name="iva" step="0.01" min="1" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="total" class="col-sm-4 col-form-label">Total</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="total" name="total" step="0.01" min="1" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-info btnGuardar">Guardar Factura</button>
+                </form>
+            </div>
         </div>
-        <hr>
-            <!-- Contenedor de detalles de productos -->
-            <div id="productos-container">
-                <!-- Fila de detalles del primer producto -->
-                <div class="row mb-3 producto-item">
-                    <div class="col-md-2 text-center">
-                        <label for="articulo">Codigo Producto</label>
-                        <input type="text" class="form-control codigo-producto" name="articulo[]" placeholder="Código Producto">
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <label for="detalle_producto">Detalle Producto</label>
-                        <input type="text" class="form-control detalle-producto" name="detalle_producto[]" placeholder="Detalle Producto" readonly>
-                    </div>
-                    <div class="col-md-2 text-center">
-                        <label for="unidades">Unidades</label>
-                        <input type="number" class="form-control unidades" name="unidades[]" placeholder="Unidades">
-                    </div>
-                    <div class="col-md-2 text-center">
-                        <label for="precio_unitario">Precio U</label>
-                        <input type="decimal" class="form-control precio-unitario" name="precio_unitario[]" placeholder="Costo" readonly> 
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <label for="valor_total">Total</label>
-                        <input type="decimal" class="form-control valor-total" name="valor_total[]" placeholder="Costo Total" readonly>
-                    </div>
-                </div>
-                
-                
-            </div>
-            <hr>           
-                     
-            <!-- Botón para enviar el formulario -->
-            <div class="row">
-                <div class="col-md-6">
-                    <button type="button" id="agregarFila" class="btn btn-secondary"> + Agregar Producto</button>
-                </div>
-                
-            </div>
-
-            <hr> 
-        <div class="card align-items-center">
-            <div class="row justify-content-center mt-2 mb-3">
-                <div class="col-md-2 text-center">
-                    <label for="subtotal">Subtotal</label>
-                    <input type="decimal" id="subtotal" name="subtotal" placeholder="Subtotal" class="form-control" readonly>
-                </div>
-                <div class="col-md-2 text-center">
-                    <label for="iva">IVA</label>
-                    <input type="number" id="iva" name="iva" placeholder="IVA" class="form-control" readonly>
-                </div>
-                <div class="col-md-2 text-center">
-                    <label for="total">Total</label>
-                    <input type="decimal" id="total" name="total" placeholder="Total" class="form-control" readonly>
-                </div>
-                <div class="col-md-4 mt-3 text-center"> 
-                    <button type="submit" class="btn btn-primary">Registrar Venta</button>
-                </div>
-            </div>  
-        </div>
-    </form>
+    </div>
 
 
-    
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            // autocompletar cliente
-            $('#cliente').on('blur', function() {
-                var cedula = $(this).val();
-                $.ajax({
-                    url: '{% url "obtener_cliente" %}',
-                    data: {'cedula': cedula},
-                    success: function(data) {
-                        $('#nombres').val(data.nombres);
-                        $('#apellidos').val(data.apellidos);
-                    },
-                    error: function() {
-                        $('#nombres').val('');
-                        $('#apellidos').val('');
-                    }
-                });
-            });
-    
-            // autocompletar producto
-            $(document).on('blur', '.codigo-producto', function() {
-                var codigoProducto = $(this).val();
-                var $fila = $(this).closest('.producto-item');
-                $.ajax({
-                    url: '{% url "obtener_producto" %}',
-                    data: {'codigo_producto': codigoProducto},
-                    success: function(data) {
-                        $fila.find('.detalle-producto').val(data.nombre_articulo);
-                        $fila.find('.precio-unitario').val(data.precio);
-                    },
-                    error: function() {
-                        $fila.find('.detalle-producto').val('');
-                        $fila.find('.precio-unitario').val('');
-                    }
-                });
-            });
 
-            // calculos
-            function calcularTotal($fila) {
-            var unidades = parseFloat($fila.find('.unidades').val());
-            var precioUnitario = parseFloat($fila.find('.precio-unitario').val());
-            var total = unidades * precioUnitario;
-            if (!isNaN(total)) {
-                $fila.find('.valor-total').val(total.toFixed(2));
-            }
-        }
-
-        // calculo total cuando cambian las unidades o el precio
-        $(document).on('input', '.unidades, .precio-unitario', function() {
-            var $fila = $(this).closest('.producto-item');
-            calcularTotal($fila);
-        });
-
-            // agregar una nueva fila 
-            function agregarFilaVenta() {
-                var nuevaFila = `
-                
-                <div class="row mb-3 producto-item">
-                    <div class="col-md-2 text-center">
-                        <input type="text" class="form-control codigo-producto" name="articulo[]" placeholder="Código Producto">
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <input type="text" class="form-control detalle-producto" name="detalle_producto[]" placeholder="Detalle Producto" readonly>
-                    </div>
-                    <div class="col-md-2 text-center">
-                        <input type="number" class="form-control unidades" name="unidades[]" placeholder="Unidades">
-                    </div>
-                    <div class="col-md-2 text-center">
-                        <input type="number" class="form-control precio-unitario" name="precio_unitario[]" placeholder="Costo" readonly>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <input type="number" class="form-control valor-total" name="valor_total[]" placeholder="Costo Total" readonly>
-                    </div>
-                </div>
-            `;
-                $('#productos-container').append(nuevaFila);
-            }
-    
-            // escuchar clic en el botón para agregar una nueva fila
-            $('#agregarFila').on('click', function() {
-                agregarFilaVenta();
-            });
-        });
-
-
-        // calcular el subtotal iva y totl
-function calcularTotales() {
-    var subtotal = 0;
-    $('.producto-item').each(function() {
-        var unidades = parseFloat($(this).find('.unidades').val());
-        var precioUnitario = parseFloat($(this).find('.precio-unitario').val());
-        var total = unidades * precioUnitario;
-        if (!isNaN(total)) {
-            subtotal += total;
+$(document).on('blur', '.codigo_producto', function() {
+    var codigoProducto = $(this).val();
+    var $fila = $(this).closest('.product-row');
+    $.ajax({
+        url: '{% url "autoProducto" %}',
+        data: {'codigo_producto': codigoProducto},
+        success: function(data) {
+            $fila.find('.nombre_articulo').val(data.nombre_articulo);
+            $fila.find('.precio').val(data.precio);
+        },
+        error: function() {
+            $fila.find('.nombre_articulo').val('');
+            $fila.find('.precio').val('');
         }
     });
-    var iva = subtotal * 0.15; 
-    var total = subtotal + iva;
-    
-    $('#subtotal').val(subtotal.toFixed(2));
-    $('#iva').val(iva.toFixed(2));
-    $('#total').val(total.toFixed(2));
-}
-
-// calcular totales
-$(document).ready(function() {
-    calcularTotales();
 });
 
-// calcular totales al cambiar las unidades o el precio de los productos
-$(document).on('input', '.unidades, .precio-unitario', function() {
-    calcularTotales();
+        $(document).ready(function() { 
+        $('#cedula').on('input', function() {       
+        var cedula = $(this).val();
+ 
+        $.ajax({
+            
+            url: '{% url "autoCliente" %}',
+            data: {'cedula': cedula},
+            success: function(data) {
+                $('#cliente').val(data.cliente);
+                $('#contacto').val(data.contacto);
+                $('#email').val(data.email);
+            },
+            error: function() {
+                $('#cliente').val('');
+                $('#contacto').val('');
+                $('#email').val('');
+            }
+        });
+    });
 });
 
+        document.getElementById('add-product').addEventListener('click', function () {
+            const container = document.getElementById('product-container');
+            const productRow = document.createElement('div');
+            productRow.className = 'product-row row';
+
+            productRow.innerHTML = `
+                <div class="col-md-3">
+                    <input type="text" class="form-control codigo_producto" name="codigo_producto[]" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control nombre_articulo" name="nombre_producto[]" required readonly>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" min="1" name="unidades[]" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control precio" step="0.01" min="1" name="precio[]" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" name="subtotal_producto[]" step="0.01" min="1" readonly>
+                </div>
+            `;
+
+            container.appendChild(productRow);
+        });
+
+        document.getElementById('product-container').addEventListener('input', function (e) {
+            if (e.target.name === 'unidades[]' || e.target.name === 'precio[]') {
+                const row = e.target.closest('.product-row');
+                const unidades = row.querySelector('[name="unidades[]"]').value;
+                const precio = row.querySelector('[name="precio[]"]').value;
+                const subtotalField = row.querySelector('[name="subtotal_producto[]"]');
+                subtotalField.value = (unidades * precio).toFixed(2);
+
+                updateTotals();
+            }
+        });
+
+        function updateTotals() {
+            const subtotals = document.querySelectorAll('[name="subtotal_producto[]"]');
+            let subtotal = 0;
+            subtotals.forEach(field => {
+                subtotal += parseFloat(field.value) || 0;
+            });
+            const iva = subtotal * 0.15;
+            const total = subtotal + iva;
+
+            document.getElementById('subtotal').value = subtotal.toFixed(2);
+            document.getElementById('iva').value = iva.toFixed(2);
+            document.getElementById('total').value = total.toFixed(2);
+        }
     </script>
-    
-
-   
-    
-
-
-
+  
 {% endblock %}
+

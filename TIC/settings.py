@@ -68,6 +68,8 @@ TEMPLATES = [
     },
 ]
 
+
+
 WSGI_APPLICATION = 'TIC.wsgi.application'
 
 
@@ -81,6 +83,7 @@ DATABASES = {
     }
 }
 
+LOGIN_URL = 'login'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -100,7 +103,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+ 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 

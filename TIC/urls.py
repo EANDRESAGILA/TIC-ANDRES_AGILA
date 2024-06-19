@@ -18,27 +18,30 @@ from django.contrib import admin
 from django.urls import path
 from apps import views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login', views.login_view, name="login"),
+    path('logout', views.logout_view, name="logout"),
+    path('registroUser', views.registroUser, name="registroUser"),
     path('base/', views.base),
     path('clientes/', views.clientes, name="clientes"),
     path('nuevoC/', views.nuevoC, name="nuevoC"),
-    path('ventas/', views.ventas,name="ventas"),
+    path('factura/', views.factura,name="factura"),
+    path('autoCliente/', views.autoCliente, name='autoCliente'),
+    path('autoProducto/', views.autoProducto, name='autoProducto'),
+    path('editarF/<numeroF>', views.editarF,name="editarF"),
+    path('eliminarFactura/<numeroF>/', views.eliminarFactura, name='eliminarFactura'),
     path('editarCliente/<cedula>', views.editarCliente,name="editarCliente"),
     path('clientes/eliminarCliente/<cedula>', views.eliminarCliente,name="eliminarCliente"),
     path('productos/', views.productos, name="productos"),
     path('eliminarProducto/<codigo_producto>/', views.eliminarProducto, name='eliminarProducto'),
     path('editarInventario/<codigo_producto>/', views.editarInventario, name="editarInventario"),
     path('listaPrecios/', views.listaPrecios, name="listaPrecios"),
-    path('editarPrecio/<producto>/', views.editarPrecio, name="editarPrecio"),
-    path('eliminarPrecio/<producto>/', views.eliminarPrecio, name='eliminarPrecio'),
+    path('eliminarPrecio/<codigo_producto>/', views.eliminarPrecio, name='eliminarPrecio'),
     path('nuevaVenta/', views.nuevaVenta, name="nuevaVenta"),
-    path('ventas/editarVenta/<venta_id>', views.editarVenta, name="editarVenta"),
-    path('eliminarVenta/<venta_id>/', views.eliminarVenta, name='eliminarVenta'),
     path('dashboard/', views.dashboard, name="dashboard"),
-    path('obtener_cliente/', views.obtener_cliente, name='obtener_cliente'),
-    path('obtener_producto/', views.obtener_producto, name='obtener_producto'),
+  
 
 
 ]

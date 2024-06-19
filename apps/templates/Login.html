@@ -5,14 +5,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href= "{% static 'css/style.css' %}">
+  <link rel="stylesheet" href= "{% static '/css/messages.css' %}">
   <title>Login System</title>
 </head>
 <body>
-    <ul class="messages">
-        {% for message in messages %}
-            <li>{{ message }}</li>
-        {% endfor %}    
-    </ul>
+    {% if messages %}
+ <ul class="messages">
+     {% for message in messages %}
+     <li class="alert">{{ message }}</li>
+     {% endfor %}
+ </ul>
+ {% endif %}
+ 
 
   <div id="contenedor">
             
@@ -36,8 +40,8 @@
             </div>
             <hr>
             <div class="pie-form">
-                <a href="#">Recuperar Contraseña</a>
-                <a href="#">¿No tienes Cuenta? Registrate</a>
+               
+                <a href="registroUser">¿No tienes Cuenta? Registrate</a>
 
             </div>
         </div>

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Ventas{% endblock %}
+{% block pageTitle %}
+GESTIÓN VENTAS
+{% endblock %}
+{% block cenTitle %} REGISTRO DE VENTAS {% endblock %}
+
+
+{% block content %}
+
+<form method="get" class="form-inline mb-2 justify-content-center">
+    <input type="text" name="busqueda" class="form-control mr-2" placeholder="#Factura,Cedula o Nombre ">
+    <button type="submit" class="btn btn-info">Buscar</button>
+</form>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-12 col-xl-12 ">
+            <div class="table-responsive py-2">
+                <table class="table table-striped table-bordered table-hover table table-bordered border border-gray">
+                    <thead class="text-center">
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Número Factura</th>
+                            <th>Cedula</th>
+                            <th>Cliente</th>
+                            <th>Subtotal</th>
+                            <th>IVA</th>
+                            <th>Total</th>
+                            <th colspan="2">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        {% for x in fact %}
+                        <tr>
+                            <td>{{x.fecha}}</td>
+                            <td>{{x.numeroF}}</td>
+                            <td>{{x.cliente.cedula}}</td>
+                            <td>{{x.cliente.nombres}}</td>
+                            <td>{{x.subtotal}}</td>
+                            <td>{{x.iva}}</td>
+                            <td>{{x.total}}</td>
+                            
+                            <td><a href="{% url 'editarF' x.numeroF %}" class="btn btn-info">Editar</a></td>
+                            <td>
+                                <form action="{% url 'eliminarFactura' x.numeroF %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="submit" value="Eliminar" class="btn btn-danger btnEliminacion">
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
