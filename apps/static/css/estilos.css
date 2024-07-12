@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500&display=swap');
 :root{
-    --color-barra-lateral: gray ;
+    --color-barra-lateral: rgb(11, 11, 11) ;
 
     --color-texto:rgb(253, 253, 253);
     --color-texto-menu:rgb(255, 255, 255);
@@ -168,8 +168,19 @@ main.min-main{
     margin-left: 80px;
 }
 
+/*------------------> usuario*/
+.usuario {
 
-   
+    background-color: black;
+    color: rgb(255, 255, 255);
+    border-radius: 10px;  
+    min-width: 50px;
+    font-size: 25px;
+    display: none;
+    padding: 0 30px;
+
+}
+
 
 /*------------------> Responsive*/
 @media (max-height: 660px){
@@ -226,6 +237,8 @@ main.min-main{
     background-color:var(--color-barra-lateral);
     text-align: center;
     padding: 10px;
+    color: #FFFFFF;
+    
 }
 
 .titulop{

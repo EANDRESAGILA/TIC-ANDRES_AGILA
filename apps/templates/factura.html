@@ -11,7 +11,7 @@ GESTIÓN VENTAS
 
 <form method="get" class="form-inline mb-2 justify-content-center">
     <input type="text" name="busqueda" class="form-control mr-2" placeholder="#Factura,Cedula o Nombre ">
-    <button type="submit" class="btn btn-info">Buscar</button>
+    <button type="submit" class="btn btn-info" style="color: #ffffff; background-color: #1260FD;">Buscar</button>
 </form>
 
     <div class="row">
@@ -41,7 +41,7 @@ GESTIÓN VENTAS
                             <td>{{x.iva}}</td>
                             <td>{{x.total}}</td>
                             <td><a href="{% url 'visualizarVenta' x.numeroF %}" class="btn btn-secondary">Ver</a></td>
-                            <td><a href="{% url 'editarF' x.numeroF %}" class="btn btn-info">Editar</a></td>
+                            <td><a href="{% url 'editarF' x.numeroF %}" class="btn btn-info" style="color: #ffffff; background-color: #1260FD;">Editar</a></td>
                             <td>
                                 <form action="{% url 'eliminarFactura' x.numeroF %}" method="post">
                                     {% csrf_token %}
@@ -49,6 +49,7 @@ GESTIÓN VENTAS
                                 </form>
                             </td>
                         </tr>
+                        
                         {% endfor %}
                     </tbody>
                 </table>

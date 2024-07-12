@@ -37,7 +37,7 @@
 
     <div class="barra-lateral">
         <div class="nombre-pagina">
-            <ion-icon id="grid" name="grid-outline"></ion-icon>
+            <ion-icon id="grid" name="grid-outline" role="img" class="md hydrated" aria-label="Icono de cuadrícula" title="Ver cuadrícula"></ion-icon>
             <span>ALMACEN</span>
         </div>
         <hr>
@@ -47,57 +47,62 @@
                 <li>
                     
                     <a href="/nuevoC">
-                        <ion-icon name="person-add-outline"></ion-icon>
+                        <ion-icon name="person-add-outline" aria-label="Nuevo Cliente" title="Nuevo Cliente"></ion-icon>
                         <span> Nuevo Cliente</span>
                     </a>
                 </li>
                 <li> 
                     <a  href="/nuevaVenta">
-                        <ion-icon name="bag-add-outline"></ion-icon>
+                        <ion-icon name="bag-add-outline" aria-label="Nueva venta" title="Nueva Venta"></ion-icon>
                         <span> Nueva Venta</span>
                     </a>
                 </li>
                 <li>
                     <a href="/dashboard">
-                        <ion-icon name="bar-chart-outline"></ion-icon>
+                        <ion-icon name="bar-chart-outline" aria-label="Dashboard" title="Dashboard"></ion-icon>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li>
                     <a  href="/clientes">
-                        <ion-icon name="people-outline"></ion-icon>
+                        <ion-icon name="people-outline" aria-label="Clientes" title="Clientes"></ion-icon>
                         <span>Clientes</span>
                     </a>
                 </li>
                 <li>
                     <a href="/factura">
-                        <ion-icon name="bag-check-outline"></ion-icon>
+                        <ion-icon name="bag-check-outline" aria-label="Venta" title="Venta"></ion-icon>
                         <span>Ventas</span>
                     </a>
                 </li>
                 <li>
                     <a  href="/listaPrecios">
-                        <ion-icon name="document-text-outline"></ion-icon>
+                        <ion-icon name="document-text-outline" aria-label="Lista precios" title="Lista precios"></ion-icon>
                         <span>Lista de Precios</span>
                     </a>
                 </li>
                 <li>
                     <a href="/productos">
-                        <ion-icon name="bookmark-outline"></ion-icon>
+                        <ion-icon name="bookmark-outline" aria-label="Inventario" title="inventario"></ion-icon>
                         <span>Inventario</span>
-                    </a>
-                </li>
-                
-              
-                <li>
-                    <a href="/logout">
-                        <ion-icon name="log-out"></ion-icon>
-                        <span>Salir</span>
                     </a>
                 </li>
             </ul>
         </nav>
         <hr>  
+        <div class="usuario d-flex justify-content-between align-items-center">
+         
+            <ion-icon name="person-circle-outline" aria-label="User" title="User"></ion-icon>
+            <div class="nombreUser">
+                <span class="nombre">{{ request.user.username }}</span>
+            </div>
+            <nav class="navegacion">
+                <a href="/logout">
+                    <ion-icon name="log-out" aria-label="log-out" title="log-out"></ion-icon>
+                </a>    
+            </nav>
+        </div>
+       
         
 
     </div>

@@ -282,6 +282,7 @@ def nuevaVenta(request):
 
         forma_pago = request.POST.get('forma_pago')
         observaciones = request.POST.get('observaciones')
+        porcentaje = int(request.POST.get('porcentaje'))
 
         # Verificar si todos los productos tienen suficiente stock antes de crear la factura y las ventas
         productos_con_stock_insuficiente = []
@@ -299,7 +300,7 @@ def nuevaVenta(request):
 
         # Crear una nueva instancia de Factura y guardarla en la base de datos
         factura = Factura.objects.create(user=request.user,fecha=fecha, cliente=cliente, formaPago=forma_pago,
-                                         observaciones=observaciones, subtotal=0, iva=0, total=0)
+                                         observaciones=observaciones,porcentaje=porcentaje, subtotal=0, iva=0, total=0)
 
         subtotal_general = 0  # Variable para calcular el subtotal general de la factura
 
@@ -313,7 +314,7 @@ def nuevaVenta(request):
             subtotal_general += subtotal_producto
 
             #crear instancia de venta y guardar en la base de datos
-            Venta.objects.create(user=request.user,factura=factura, producto=producto, unidades=unidades,
+            Venta.objects.create(factura=factura, producto=producto, unidades=unidades,
                                  precio=precio, subtotal=subtotal_producto)
 
             #actualizar el stock del producto
@@ -354,15 +355,40 @@ def autoCliente(request):
     
 @login_required 
 def autoProducto(request):
-    codigo_producto = request.GET.get('codigo_producto', None)
-    if codigo_producto and Producto.objects.filter(codigo_producto=codigo_producto).exists():
-        producto = Producto.objects.get(codigo_producto=codigo_producto)
+    codigo_producto = request.GET.get('codigo_producto[]', None)
+    nombre_articulo = request.GET.get('nombre_articulo[]', None)
+    
+    if codigo_producto:
+        try:
+            producto = Producto.objects.get(codigo_producto=codigo_producto)
+        except Producto.DoesNotExist:
+            return JsonResponse({'error': 'Producto no encontrado'}, status=404)
         data = {
+            'codigo_producto': producto.codigo_producto,
             'nombre_articulo': producto.nombre_articulo,
             'precio': producto.precio,
         }
         return JsonResponse(data)
-    return JsonResponse({'error': 'Producto no encontrado'}, status=404)
+    
+    elif nombre_articulo:
+        productos = Producto.objects.filter(nombre_articulo__icontains=nombre_articulo)
+        if productos.exists():
+            producto = productos.first()  # Tomamos el primer producto encontrado
+            data = {
+                'codigo_producto': producto.codigo_producto,
+                'nombre_articulo': producto.nombre_articulo,
+                'precio': producto.precio,
+            }
+            return JsonResponse(data)
+        else:
+            return JsonResponse({'error': 'Producto no encontrado'}, status=404)
+    
+    else:
+        return JsonResponse({'error': 'Parámetros de búsqueda incorrectos'}, status=400)
+    
+    
+   
+    
     
 
 @login_required     
@@ -409,9 +435,11 @@ def editarF(request, numeroF):
 
     if request.method == 'POST':
         # actualizo los datos de la factura
+        factura.user=request.user
         factura.formaPago = request.POST.get('forma_pago')
         factura.observaciones = request.POST.get('observaciones')
         factura.subtotal = float(request.POST.get('subtotal'))
+        factura.porcentaje = int(request.POST.get('porcentaje'))
         factura.iva = float(request.POST.get('iva'))
         factura.total = float(request.POST.get('total'))
         factura.save()
@@ -425,7 +453,6 @@ def editarF(request, numeroF):
             subtotal_producto = float(request.POST.getlist('subtotal_producto[]')[i])
             
             Venta.objects.create(
-                user=request.user,
                 factura=factura,
                 producto=Producto.objects.get(codigo_producto=codigo_producto),
                 unidades=unidades,

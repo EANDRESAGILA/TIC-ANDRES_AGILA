@@ -1,8 +1,6 @@
-
 {% extends 'base.html' %}
-{% block pageTitle %}
-NUEVO CLIENTE
-{% endblock %}
+{% block title %} Nuevo Cliente {% endblock %}
+{% block pageTitle %} NUEVO CLIENTE {% endblock %}
 {% block cenTitle %} AGREGAR NUEVO CLIENTE {% endblock %}
 
 {% block content %}
@@ -42,7 +40,7 @@ NUEVO CLIENTE
                             <input id="email" type="email" placeholder="e-mail" name="email" maxlength="45" class="form-control" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-info"  title="agregar" name="agregar">Agregar Cliente</button>
+                    <button type="submit" class="btn btn-info btnGuardar" title="agregar" name="agregar" style="color: #000000; background-color: #4CAF50;">Guardar Cliente Nuevo</button>
                 </form>
             </div>
         </div>

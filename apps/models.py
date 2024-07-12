@@ -33,6 +33,7 @@ class Factura(models.Model):
     formaPago = models.CharField(max_length=50)
     observaciones = models.TextField(blank=True)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    porcentaje = models.IntegerField()
     iva = models.DecimalField(max_digits=10, decimal_places=2)
     total = models.DecimalField(max_digits=10, decimal_places=2)
        
@@ -41,7 +42,6 @@ class Factura(models.Model):
 
 
 class Venta(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     factura = models.ForeignKey(Factura, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     unidades = models.IntegerField()

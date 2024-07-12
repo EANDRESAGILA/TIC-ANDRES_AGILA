@@ -11,7 +11,7 @@ GESTIÓN CLIENTES
 
 <form method="get" class="form-inline mb-2 justify-content-center">
     <input type="text" name="busqueda" class="form-control mr-2" placeholder="Cedula o Nombre ">
-    <button type="submit" class="btn btn-info">Buscar</button>
+    <button type="submit" class="btn btn-info" style="color: #ffffff; background-color: #1260FD;">Buscar</button>
 </form>
 
 
@@ -40,7 +40,7 @@ GESTIÓN CLIENTES
                             <td>{{x.direccion}}</td>
                             <td>{{x.email}}</td>
                             <td>{{x.celular}}</td>
-                            <td><a href="{% url 'editarCliente' x.cedula %}" class="btn btn-info">Editar</a></td>
+                            <td><a href="{% url 'editarCliente' x.cedula %}" class="btn btn-info" style="color: #ffffff; background-color: #1260FD;">Editar</a></td>
                             <td>
                                 <form id="eliminarForm" action="{% url 'eliminarCliente' x.cedula %}" method="post">
                                     {% csrf_token %}

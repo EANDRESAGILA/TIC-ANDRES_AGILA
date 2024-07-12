@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Nuevo Cliente{% endblock %}
+{% block title %}Nueva Venta{% endblock %}
 
 {% block pageTitle %}
 NUEVA VENTA
@@ -64,19 +64,19 @@ NUEVA VENTA
                     <div id="product-container">
                         <div class="product-row row">
                             <div class="col-md-3">
-                                <input type="text" class="form-control codigo_producto" name="codigo_producto[]" required>
+                                <input type="text" class="form-control codigo_producto" name="codigo_producto[]" title="codigo producto" required>
                             </div>
                             <div class="col-md-3">
-                                <input type="text" class="form-control nombre_articulo" name="nombre_producto[]" required readonly>
+                                <input type="text" class="form-control nombre_articulo" name="nombre_articulo[]" title="nombre articulo" required>
                             </div>
                             <div class="col-md-2">
-                                <input type="number" class="form-control" min="1" name="unidades[]" required>
+                                <input type="number" class="form-control" min="1" name="unidades[]" title="unidades" required>
                             </div>
                             <div class="col-md-2">
-                                <input type="number" class="form-control precio" name="precio[]"  step="0.01" min="1" required>
+                                <input type="number" class="form-control precio" name="precio[]"  title="precio" step="0.01" min="1" required>
                             </div>
                             <div class="col-md-2">
-                                <input type="number" class="form-control" name="subtotal_producto[]"  step="0.01" min="1" readonly>
+                                <input type="number" class="form-control" name="subtotal_producto[]"  title="subtotal producto" step="0.01" min="1" readonly>
                             </div>
                         </div>
                     </div>
@@ -104,9 +104,13 @@ NUEVA VENTA
                             </div>
                             <div class="form-group row">
                                 <label for="iva" class="col-sm-4 col-form-label">IVA</label>
-                                <div class="col-sm-8">
+                                <div class="col-sm-3">
+                                    <input type="number" class="form-control" id="porcentaje" name="porcentaje" placeholder="%" required>
+                                </div>
+                                <div class="col-sm-5">
                                     <input type="number" class="form-control" id="iva" name="iva" step="0.01" min="1" readonly>
                                 </div>
+                                
                             </div>
                             <div class="form-group row">
                                 <label for="total" class="col-sm-4 col-form-label">Total</label>
@@ -117,7 +121,7 @@ NUEVA VENTA
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-info btnGuardar">Guardar Factura</button>
+                    <button type="submit" class="btn btn-info btnGuardar" style="color: #000000; background-color: #4CAF50;">Guardar Factura</button>
                 </form>
             </div>
         </div>
@@ -126,23 +130,29 @@ NUEVA VENTA
 
     <script>
 
-$(document).on('blur', '.codigo_producto', function() {
-    var codigoProducto = $(this).val();
+$(document).on('blur', '.codigo_producto, .nombre_articulo', function() {
+    var value = $(this).val();
+    var fieldName = $(this).attr('name');
     var $fila = $(this).closest('.product-row');
+    
+    var data = {};
+    data[fieldName] = value;
+
     $.ajax({
         url: '{% url "autoProducto" %}',
-        data: {'codigo_producto': codigoProducto},
+        data: data,
         success: function(data) {
+            $fila.find('.codigo_producto').val(data.codigo_producto);
             $fila.find('.nombre_articulo').val(data.nombre_articulo);
             $fila.find('.precio').val(data.precio);
         },
         error: function() {
+            $fila.find('.codigo_producto').val('');
             $fila.find('.nombre_articulo').val('');
             $fila.find('.precio').val('');
         }
     });
 });
-
         $(document).ready(function() { 
         $('#cedula').on('input', function() {       
         var cedula = $(this).val();
@@ -172,19 +182,19 @@ $(document).on('blur', '.codigo_producto', function() {
 
             productRow.innerHTML = `
                 <div class="col-md-3">
-                    <input type="text" class="form-control codigo_producto" name="codigo_producto[]" required>
+                    <input type="text" class="form-control codigo_producto" name="codigo_producto[]" title="codigo producto" required>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" class="form-control nombre_articulo" name="nombre_producto[]" required readonly>
+                    <input type="text" class="form-control nombre_articulo" name="nombre_articulo[]" title="nombre articulo" required>
                 </div>
                 <div class="col-md-2">
-                    <input type="number" class="form-control" min="1" name="unidades[]" required>
+                    <input type="number" class="form-control" min="1" name="unidades[]" title="unidades"  required>
                 </div>
                 <div class="col-md-2">
-                    <input type="number" class="form-control precio" step="0.01" min="1" name="precio[]" required>
+                    <input type="number" class="form-control precio" step="0.01" min="1" name="precio[]"  title="precio" required>
                 </div>
                 <div class="col-md-2">
-                    <input type="number" class="form-control" name="subtotal_producto[]" step="0.01" min="1" readonly>
+                    <input type="number" class="form-control" name="subtotal_producto[]" title="subtotal producto" step="0.01" min="1" readonly>
                 </div>
             `;
 
@@ -203,19 +213,27 @@ $(document).on('blur', '.codigo_producto', function() {
             }
         });
 
+
+
+
         function updateTotals() {
             const subtotals = document.querySelectorAll('[name="subtotal_producto[]"]');
             let subtotal = 0;
+            let porcentaje = parseFloat(document.getElementById('porcentaje').value) || 0;
             subtotals.forEach(field => {
                 subtotal += parseFloat(field.value) || 0;
             });
-            const iva = subtotal * 0.15;
+            const iva = (subtotal * porcentaje)/100;
             const total = subtotal + iva;
 
             document.getElementById('subtotal').value = subtotal.toFixed(2);
             document.getElementById('iva').value = iva.toFixed(2);
             document.getElementById('total').value = total.toFixed(2);
         }
+
+        document.getElementById('porcentaje').addEventListener('input', function () {
+        updateTotals();
+    });
     </script>
   
 {% endblock %}

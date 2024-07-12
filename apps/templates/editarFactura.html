@@ -104,9 +104,12 @@ EDITAR VENTA
                             </div>
                             <div class="form-group row">
                                 <label for="iva" class="col-sm-4 col-form-label">IVA</label>
-                                <div class="col-sm-8">
-                                    <input type="number" class="form-control" id="iva" name="iva" step="0.01" min="1" value="{{ factura.iva }}" readonly>
+                                <div class="col-sm-3">
+                                    <input type="number" class="form-control" id="porcentaje" name="porcentaje" value="{{ factura.porcentaje }}" required>
                                 </div>
+                                <div class="col-sm-5">
+                                    <input type="number" class="form-control" id="iva" name="iva" step="0.01" min="1" value="{{ factura.iva }}" readonly>
+                                </div>                            
                             </div>
                             <div class="form-group row">
                                 <label for="total" class="col-sm-4 col-form-label">Total</label>
@@ -125,6 +128,7 @@ EDITAR VENTA
 
     <script>
 
+        
        $(document).ready(function() {
         function updateSubtotal() {
         const productRows = $('.product-row');
@@ -141,13 +145,18 @@ EDITAR VENTA
         updateTotal();
     }
 
-    function updateTotal() {
-        const subtotal = parseFloat($('#subtotal').val()) || 0;
-        const iva = subtotal * 0.15; 
-        const total = subtotal + iva;
-        $('#iva').val(iva.toFixed(2));
-        $('#total').val(total.toFixed(2));
-    }
+    document.getElementById('porcentaje').addEventListener('input', function () {
+    updateTotal();
+});
+function updateTotal() {
+    const subtotal = parseFloat($('#subtotal').val()) || 0;
+    const porcentaje = parseFloat($('#porcentaje').val()) || 0;
+    const iva = (subtotal * porcentaje)/100; 
+    const total = subtotal + iva;
+    $('#iva').val(iva.toFixed(2));
+    $('#total').val(total.toFixed(2));
+}
+
 
     
     $('[name="unidades[]"], [name="precio[]"]').on('input', updateSubtotal);
@@ -179,31 +188,32 @@ EDITAR VENTA
         // escucahr si se ingresa nuevos unidades  precioss
         newRow.find('[name="unidades[]"], [name="precio[]"]').on('input', updateSubtotal);
     });
-
-    // completar datos prodicto
-    $(document).on('blur', '.codigo_producto', function() {
-        const codigoProducto = $(this).val();
-        const $fila = $(this).closest('.product-row');
-        $.ajax({
-            url: '{% url "autoProducto" %}',
-            data: { 'codigo_producto': codigoProducto },
-            success: function(data) {
-                $fila.find('.nombre_articulo').val(data.nombre_articulo);
-                $fila.find('.precio').val(data.precio);
-                updateSubtotal();
-            },
-            error: function() {
-                $fila.find('.nombre_articulo').val('');
-                $fila.find('.precio').val('');
-                updateSubtotal();
-            }
-        });
-    });
-
-
     updateSubtotal();
 });
 
+$(document).on('blur', '.codigo_producto, .nombre_articulo', function() {
+    var value = $(this).val();
+    var fieldName = $(this).attr('name');
+    var $fila = $(this).closest('.product-row');
+    
+    var data = {};
+    data[fieldName] = value;
+
+    $.ajax({
+        url: '{% url "autoProducto" %}',
+        data: data,
+        success: function(data) {
+            $fila.find('.codigo_producto').val(data.codigo_producto);
+            $fila.find('.nombre_articulo').val(data.nombre_articulo);
+            $fila.find('.precio').val(data.precio);
+        },
+        error: function() {
+            $fila.find('.codigo_producto').val('');
+            $fila.find('.nombre_articulo').val('');
+            $fila.find('.precio').val('');
+        }
+    });
+});
                
     </script>
 {% endblock %}
